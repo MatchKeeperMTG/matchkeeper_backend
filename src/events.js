@@ -1,6 +1,9 @@
-import { Express } from 'express';
+import 'express';
 
-export function eventEndpoints(app: Express) {
+/**
+ * @param {Express} app 
+ */
+export function eventEndpoints(app) {
     app.post('/event', (req, res) => {
         res.send("Create Event");
     });

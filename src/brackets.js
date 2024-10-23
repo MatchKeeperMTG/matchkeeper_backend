@@ -1,6 +1,9 @@
-import { Express } from 'express';
+import 'express';
 
-export function bracketEndpoints(app: Express) {
+/**
+ * @param {Express} app 
+ */
+export function bracketEndpoints(app) {
     app.post('/bracket', (req, res) => {
         res.send("Create Bracket");
     });

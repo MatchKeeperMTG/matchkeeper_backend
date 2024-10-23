@@ -1,6 +1,16 @@
-import { Express } from 'express';
+import 'express';
+import * as mongoose from 'mongoose';
 
-export function deckEndpoints(app: Express) {
+export const deckSchema = new mongoose.Schema({
+    name: String,
+    description: String
+});
+
+/**
+ * 
+ * @param {Express} app 
+ */
+export function deckEndpoints(app) {
     app.get('/card/url', (req, res) => {
         res.send("Get Card Image");
     });

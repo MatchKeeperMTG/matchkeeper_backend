@@ -1,6 +1,10 @@
-import { Express } from 'express';
+import 'express';
+import * as mongoose from 'mongoose';
 
-export function userEndpoints(app: Express) {
+/**
+ * @param {Express} app 
+ */
+export function userEndpoints(app) {
     app.post('/user', (req, res) => {
         res.send("Create User");
     });
