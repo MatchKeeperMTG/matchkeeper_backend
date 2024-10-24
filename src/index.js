@@ -19,6 +19,8 @@ eventEndpoints(app);
 bracketEndpoints(app);
 deckEndpoints(app);
 
+app.use('/', express.static('frontend/dist'));
+
 async function main() {
     const host = process.env.SERVER_HOST ?? 'localhost';
     const port = process.env.SERVER_PORT ?? 8080;
