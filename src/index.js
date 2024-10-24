@@ -1,10 +1,10 @@
 import 'dotenv/config';
 import * as mongoose from 'mongoose';
 import express from 'express';
-import { userEndpoints } from './user.js';
-import { eventEndpoints } from './events.js';
-import { bracketEndpoints } from './brackets.js';
-import { deckEndpoints } from './deck.js';
+import { userEndpoints } from './endpoints/user.js';
+import { eventEndpoints } from './endpoints/events.js';
+import { bracketEndpoints } from './endpoints/brackets.js';
+import { deckEndpoints } from './endpoints/deck.js';
 
 if (process.env.MONGO_URL === undefined) {
     throw new Error("MONGO_URL is not defined, make sure .env exists and contains a valid MongoDB URL for the MONGO_URL key.");
