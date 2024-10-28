@@ -16,3 +16,5 @@ There are also optional variables, with the following defaults:
 SERVER_HOST=localhost
 SERVER_PORT=8080
 ```
+
+This project is configured to run in production mode (`npm start`) and dev mode (`npm run dev`).
