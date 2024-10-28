@@ -9,9 +9,9 @@ import { deckEndpoints } from './endpoints/deck.js';
 if (process.env.MONGO_URL === undefined) {
     throw new Error('MONGO_URL is not defined, make sure .env exists and contains a valid MongoDB URL for the MONGO_URL key.');
 }
-mongoose.connect(process.env.MONGO_URL);
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
-const app = express();
+  const app = express();
 
 // Set up endpoints
 userEndpoints(app);
