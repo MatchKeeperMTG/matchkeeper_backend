@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import * as mongoose from 'mongoose';
 import express from 'express';
+import proxy from 'express-http-proxy';
+
 import { userEndpoints } from './endpoints/user.js';
 import { eventEndpoints } from './endpoints/events.js';
 import { bracketEndpoints } from './endpoints/brackets.js';
@@ -9,7 +11,7 @@ import { deckEndpoints } from './endpoints/deck.js';
 if (process.env.MONGO_URL === undefined) {
     throw new Error('MONGO_URL is not defined, make sure .env exists and contains a valid MongoDB URL for the MONGO_URL key.');
 }
-mongoose.connect(process.env.MONGO_URL);
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Schemas: deck, card, user, event, bracket?
 
@@ -71,12 +73,19 @@ const userProfileSchema = new mongoose.Schema({
 
 const app = express();
 
+
 // Set up endpoints
 userEndpoints(app);
 eventEndpoints(app);
 bracketEndpoints(app);
 deckEndpoints(app);
 
+// Serve frontend
+app.use('/', express.static('frontend/dist'));
+
+app.get('/status', (req, res) => {
+    res.send('OK');
+});
 
 async function main() {
     const host = process.env.SERVER_HOST ?? 'localhost';
