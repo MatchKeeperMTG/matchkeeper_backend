@@ -7,7 +7,7 @@
     "postinstall": "cd frontend && npm install",
     "build": "cd frontend && npm run build",
     "start": "npm run build && node src/index.js",
-    "dev": "NODE_ENV=development concurrently \"cd frontend && npm run dev\" \"node src/index.js\"",
+    "dev": "concurrently \"cd frontend && npm run dev\" \"node src/index.js\"",
     "test": "jest"
   },
   "author": "",

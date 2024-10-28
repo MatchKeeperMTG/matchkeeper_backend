@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import * as mongoose from 'mongoose';
 import express from 'express';
-import proxy from 'express-http-proxy';
 
 import { userEndpoints } from './endpoints/user.js';
 import { eventEndpoints } from './endpoints/events.js';
