@@ -2,9 +2,6 @@ import 'express';
 import * as mongoose from 'mongoose';
 import { userProfileModel } from "../index.js";
 
-/**
- * @param {Express} app 
- */
 
 
   //applies the schema to a model
@@ -12,35 +9,37 @@ import { userProfileModel } from "../index.js";
   //const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
 
 
-
+/**
+ * @param {Express} app 
+ */
 export function userEndpoints(app) {
     app.post('/api/user', (req, res) => {
-        res.send("Create User");
+        res.send('Create User');
 
         //this is a test user, in future this will be filled with information from UI
         const testData = new userProfileModel({
-            username: "myUsername",
-            firstName: "Jerry",
-            lastName: "Subwoofer",
-            userEmail: "bigboom35@gmail.com",
-            password: "IfYouCantHearMeYoureDeaf",
+            username: 'myUsername',
+            firstName: 'Jerry',
+            lastName: 'Subwoofer',
+            userEmail: 'bigboom35@gmail.com',
+            password: 'IfYouCantHearMeYoureDeaf',
             wins: 0,
             losses: 0
-          });
+        });
 
         //saves the data and displays in the console
         testData.save()
-        .then(doc => {
-            console.log('Test document saved:', doc);
-        })
-        .catch(error => {
-            console.error('Error saving test document:', error);
-        });
+            .then(doc => {
+                console.log('Test document saved:', doc);
+            })
+            .catch(error => {
+                console.error('Error saving test document:', error);
+            });
 
     });
 
     app.post('/api/user/:id', (req, res) => {
-        res.send("Modify User");
+        res.send('Modify User');
 
         var query = {'firstName': 'Jerry'};
         var newName = {'firstName': 'yrreJ', 'lastName': 'Fragrance'};
@@ -63,18 +62,18 @@ export function userEndpoints(app) {
     });
 
     app.post('/api/user/:id/stats', (req, res) => {
-        res.send("Update Statistics");
+        res.send('Update Statistics');
     })
 
     app.get('/api/user/:id/stats', (req, res) => {
-        res.send("Get User Winrate by UserName");
+        res.send('Get User Winrate by UserName');
     });
 
     app.delete('/api/user/:id', (req, res) => {
-        res.send("Delete User");
+        res.send('Delete User');
     });
 
     app.get('/api/user/:id', (req, res) => {
-        res.send("Get all User Info by UserName");
+        res.send('Get all User Info by UserName');
     });
 }
