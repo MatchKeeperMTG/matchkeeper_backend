@@ -1,4 +1,5 @@
 import 'express';
+import {eventModel} from "../index.js";
 
 /**
  * @param {Express} app 

@@ -1,10 +1,11 @@
 import 'express';
 import * as mongoose from 'mongoose';
+import { deckModel } from '../index.js';
 
-export const deckSchema = new mongoose.Schema({
-    name: String,
-    description: String
-});
+// export const deckSchema = new mongoose.Schema({
+//     name: String,
+//     description: String
+// });
 
 /**
  * 

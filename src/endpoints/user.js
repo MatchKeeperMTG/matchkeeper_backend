@@ -1,5 +1,6 @@
 import 'express';
 import * as mongoose from 'mongoose';
+import { userProfileModel } from "../index.js";
 
 /**
  * @param {Express} app 
@@ -7,7 +8,8 @@ import * as mongoose from 'mongoose';
 
 
   //applies the schema to a model
-  const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
+  
+  //const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
 
 
 
@@ -40,9 +42,24 @@ export function userEndpoints(app) {
     app.post('/api/user/:id', (req, res) => {
         res.send("Modify User");
 
-        const testData =  userProfileModel.findOne({'firstName':'Jerry'});
+        var query = {'firstName': 'Jerry'};
+        var newName = {'firstName': 'yrreJ', 'lastName': 'Fragrance'};
+        //console.log(search);
+        //search.save;
 
-        console.log(testData);
+        userProfileModel.findOneAndUpdate(query, newName, {upsert: false});
+
+        //const freak = search.updateOne({firstName: "yrreJ"}, {lastName: "EEEEEEVILLLLL"});
+        // search.save()
+        // .then(doc => {
+        //     console.log('Test document saved:', doc);
+        // })
+        // .catch(error => {
+        //     console.error('Error saving test document:', error);
+        // });
+        //const testData = userProfileModel.findOne({'firstName':'Jerry'});
+
+        //console.log(testData);
     });
 
     app.post('/api/user/:id/stats', (req, res) => {

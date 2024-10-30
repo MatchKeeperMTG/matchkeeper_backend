@@ -26,7 +26,7 @@ const userProfileSchema = new mongoose.Schema({
     losses: Number
   });
   //applies the schema to a model
-  const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
+  export const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
 
   const deckSchema = new mongoose.Schema({ 
     deckID: Number,
@@ -36,7 +36,7 @@ const userProfileSchema = new mongoose.Schema({
     deckWins : Number,
     deckLosses : Number
   });
-  const deckModel = mongoose.model('Deck', deckSchema);
+  export const deckModel = mongoose.model('Deck', deckSchema);
 
   const cardSchema = new mongoose.Schema({ 
     cardName : String,
@@ -45,7 +45,7 @@ const userProfileSchema = new mongoose.Schema({
     cardFormats : String,
     cardData : String
   });
-  const cardModel = mongoose.model('Card', cardSchema);
+  export const cardModel = mongoose.model('Card', cardSchema);
 
   const eventSchema = new mongoose.Schema({ 
     eventID : Number,
@@ -57,7 +57,7 @@ const userProfileSchema = new mongoose.Schema({
     ownerID : Number,
     bracketID : Number
   });
-  const eventModel = mongoose.model('Event', eventSchema);
+  export const eventModel = mongoose.model('Event', eventSchema);
 
   const bracketSchema = new mongoose.Schema({ 
     eventID : Number,
@@ -68,7 +68,7 @@ const userProfileSchema = new mongoose.Schema({
     userID : Number,
     bracketID : Number
   });
-  const bracketModel = mongoose.model('Bracket', bracketSchema);
+  export const bracketModel = mongoose.model('Bracket', bracketSchema);
 
 const app = express();
 

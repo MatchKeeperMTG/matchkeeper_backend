@@ -1,4 +1,5 @@
 import 'express';
+import {bracketModel} from '../index.js';
 
 /**
  * @param {Express} app 
