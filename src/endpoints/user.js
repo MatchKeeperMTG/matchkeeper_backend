@@ -39,14 +39,16 @@ export function userEndpoints(app) {
     });
 
     app.post('/api/user/:id', (req, res) => {
-        res.send('Modify User');
+        // res.send('Modify User');
 
         var query = {'firstName': 'Jerry'};
-        var newName = {'firstName': 'yrreJ', 'lastName': 'Fragrance'};
+        var newName = {'firstName': 'Freakazoid', 'lastName': 'Fragrance'};
         //console.log(search);
         //search.save;
 
-        userProfileModel.findOneAndUpdate(query, newName, {upsert: false});
+        userProfileModel.findOneAndUpdate(query, newName, {upsert: false}).then(() => {
+            res.send("Done");
+        });
 
         //const freak = search.updateOne({firstName: "yrreJ"}, {lastName: "EEEEEEVILLLLL"});
         // search.save()
