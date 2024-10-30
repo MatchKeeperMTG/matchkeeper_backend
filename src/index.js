@@ -72,6 +72,7 @@ export const bracketModel = mongoose.model('Bracket', bracketSchema);
 
 const app = express();
 
+// JSON middleware - this parses the JSON body of POST requests.
 app.use(express.json());
 
 // Set up endpoints
