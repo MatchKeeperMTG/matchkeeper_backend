@@ -72,6 +72,7 @@ export const bracketModel = mongoose.model('Bracket', bracketSchema);
 
 const app = express();
 
+app.use(express.json());
 
 // Set up endpoints
 userEndpoints(app);

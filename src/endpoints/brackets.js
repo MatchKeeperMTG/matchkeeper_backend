@@ -6,7 +6,8 @@ import {bracketModel} from '../index.js';
  */
 export function bracketEndpoints(app) {
     app.post('/api/bracket', (req, res) => {
-        res.send('Create Bracket');
+        console.log(req.body);
+        res.send('Okay.');
     });
 
     app.post('/api/bracket/:id', (req, res) => {
