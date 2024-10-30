@@ -13,15 +13,15 @@ import * as mongoose from 'mongoose';
 
 export function userEndpoints(app) {
     app.post('/api/user', (req, res) => {
-        res.send("Create User");
+        res.send('Create User');
 
         //this is a test user, in future this will be filled with information from UI
         const testData = new userProfileModel({
-            username: "myUsername",
-            firstName: "Jerry",
-            lastName: "Subwoofer",
-            userEmail: "bigboom35@gmail.com",
-            password: "IfYouCantHearMeYoureDeaf",
+            username: 'myUsername',
+            firstName: 'Jerry',
+            lastName: 'Subwoofer',
+            userEmail: 'bigboom35@gmail.com',
+            password: 'IfYouCantHearMeYoureDeaf',
             wins: 0,
             losses: 0
           });
@@ -38,7 +38,7 @@ export function userEndpoints(app) {
     });
 
     app.post('/api/user/:id', (req, res) => {
-        res.send("Modify User");
+        res.send('Modify User');
 
         const testData =  userProfileModel.findOne({'firstName':'Jerry'});
 
@@ -46,18 +46,18 @@ export function userEndpoints(app) {
     });
 
     app.post('/api/user/:id/stats', (req, res) => {
-        res.send("Update Statistics");
+        res.send('Update Statistics');
     })
 
     app.get('/api/user/:id/stats', (req, res) => {
-        res.send("Get User Winrate by UserName");
+        res.send('Get User Winrate by UserName');
     });
 
     app.delete('/api/user/:id', (req, res) => {
-        res.send("Delete User");
+        res.send('Delete User');
     });
 
     app.get('/api/user/:id', (req, res) => {
-        res.send("Get all User Info by UserName");
+        res.send('Get all User Info by UserName');
     });
 }
