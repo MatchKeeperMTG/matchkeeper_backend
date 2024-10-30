@@ -1,16 +1,15 @@
 import 'express';
 import * as mongoose from 'mongoose';
 
+
+
+//applies the schema to a model
+const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
+
+
 /**
  * @param {Express} app 
  */
-
-
-  //applies the schema to a model
-  const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
-
-
-
 export function userEndpoints(app) {
     app.post('/api/user', (req, res) => {
         res.send('Create User');
@@ -24,23 +23,23 @@ export function userEndpoints(app) {
             password: 'IfYouCantHearMeYoureDeaf',
             wins: 0,
             losses: 0
-          });
+        });
 
         //saves the data and displays in the console
         testData.save()
-        .then(doc => {
-            console.log('Test document saved:', doc);
-        })
-        .catch(error => {
-            console.error('Error saving test document:', error);
-        });
+            .then(doc => {
+                console.log('Test document saved:', doc);
+            })
+            .catch(error => {
+                console.error('Error saving test document:', error);
+            });
 
     });
 
     app.post('/api/user/:id', (req, res) => {
         res.send('Modify User');
 
-        const testData =  userProfileModel.findOne({'firstName':'Jerry'});
+        const testData = userProfileModel.findOne({ 'firstName': 'Jerry' });
 
         console.log(testData);
     });

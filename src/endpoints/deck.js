@@ -7,7 +7,6 @@ export const deckSchema = new mongoose.Schema({
 });
 
 /**
- * 
  * @param {Express} app 
  */
 export function deckEndpoints(app) {
