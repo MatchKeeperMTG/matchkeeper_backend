@@ -7,7 +7,7 @@
     "postinstall": "cd frontend && npm install",
     "build": "cd frontend && npm run build",
     "start": "npm run build && node src/index.js",
-    "dev": "NODE_ENV=development concurrently \"cd frontend && npm run dev\" \"node src/index.js\"",
+    "dev": "concurrently \"cd frontend && npm run dev\" \"node src/index.js\"",
     "test": "jest"
   },
   "author": "",
@@ -28,6 +28,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "express-http-proxy": "^2.1.1",
-    "mongoose": "^8.7.2"
+    "mongodb": "^6.10.0",
+    "mongoose": "^8.7.3"
   }
 }

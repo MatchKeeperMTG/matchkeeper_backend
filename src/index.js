@@ -1,20 +1,19 @@
 import 'dotenv/config';
 import * as mongoose from 'mongoose';
 import express from 'express';
-import proxy from 'express-http-proxy';
-
 import { userEndpoints } from './endpoints/user.js';
 import { eventEndpoints } from './endpoints/events.js';
 import { bracketEndpoints } from './endpoints/brackets.js';
 import { deckEndpoints } from './endpoints/deck.js';
 
 if (process.env.MONGO_URL === undefined) {
-    throw new Error('MONGO_URL is not defined, make sure .env exists and contains a valid MongoDB URL for the MONGO_URL key.');
+  throw new Error('MONGO_URL is not defined, make sure .env exists and contains a valid MongoDB URL for the MONGO_URL key.');
 }
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 //this makes the schema for the user
 const userProfileSchema = new mongoose.Schema({
+
     username: String,
     firstName: String,
     lastName: String,
@@ -26,48 +25,51 @@ const userProfileSchema = new mongoose.Schema({
   //applies the schema to a model
   export const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
 
-  // const deckSchema = new mongoose.Schema({ 
-  //   deckName : String,
-  //   cards : [cardSchema],
-  //   user : userProfileSchema,
-  //   deckWins : Number,
-  //   deckLosses : Number
-  // });
-  // export const deckModel = mongoose.model('Deck', deckSchema);
+//   const deckSchema = new mongoose.Schema({ 
+//     deckName : String,
+//     cards : [cardSchema],
+//     user : userProfileSchema,
+//     deckWins : Number,
+//     deckLosses : Number
+//   });
+//   export const deckModel = mongoose.model('Deck', deckSchema);
 
-  // const cardSchema = new mongoose.Schema({ 
-  //   cardName : String,
-  //   deck : deckSchema,
-  //   cardImage : String,
-  //   cardFormats : [String],
-  //   cardData : [String]
-  // });
-  // export const cardModel = mongoose.model('Card', cardSchema);
+//   const cardSchema = new mongoose.Schema({ 
+//     cardName : String,
+//     deck : deckSchema,
+//     cardImage : String,
+//     cardFormats : [String],
+//     cardData : [String]
+//   });
+//   export const cardModel = mongoose.model('Card', cardSchema);
 
-  // const eventSchema = new mongoose.Schema({ 
-  //   eventName : String,
-  //   location : String,
-  //   playerNum : Number,
-  //   maxPlayers : Number,
-  //   dateTime : Date,
-  //   owner : userProfileSchema,
-  //   bracket : [bracketSchema],
-  //   attendees : [userProfileSchema]
-  // });
-  // export const eventModel = mongoose.model('Event', eventSchema);
+  const eventSchema = new mongoose.Schema({ 
+    eventName : String,
+    location : String,
+    playerNum : Number,
+    maxPlayers : Number,
+    dateTime : Date,
+    owner : userProfileSchema,
+    bracket : [bracketSchema],
+    attendees : [userProfileSchema]
+  });
+  export const eventModel = mongoose.model('Event', eventSchema);
 
-  // const bracketSchema = new mongoose.Schema({ 
-  //   event : eventSchema,
-  //   bracketStyle : String,
-  //   gameFormat : String,
-  //   playerNum : Number,
-  //   maxPlayers : Number,
-  //   players : [userProfileSchema],
-  // });
-  // export const bracketModel = mongoose.model('Bracket', bracketSchema);
+  const bracketSchema = new mongoose.Schema({ 
+    event : eventSchema,
+    bracketStyle : String,
+    gameFormat : String,
+    playerNum : Number,
+    maxPlayers : Number,
+    players : [userProfileSchema],
+  });
+  export const bracketModel = mongoose.model('Bracket', bracketSchema);
+//applies the schema to a model
 
 const app = express();
 
+// JSON middleware - this parses the JSON body of POST requests.
+app.use(express.json());
 
 // Set up endpoints
 userEndpoints(app);
@@ -79,16 +81,16 @@ deckEndpoints(app);
 app.use('/', express.static('frontend/dist'));
 
 app.get('/status', (req, res) => {
-    res.send('OK');
+  res.send('OK');
 });
 
 async function main() {
-    const host = process.env.SERVER_HOST ?? 'localhost';
-    const port = process.env.SERVER_PORT ?? 8080;
+  const host = process.env.SERVER_HOST ?? 'localhost';
+  const port = process.env.SERVER_PORT ?? 8080;
 
-    app.listen(port, () => {
-        console.log(`[server]: Server is running at http://${host}:${port}`);
-    });
+  app.listen(port, () => {
+    console.log(`[server]: Server is running at http://${host}:${port}`);
+  });
 }
 
 main().catch(console.error);
