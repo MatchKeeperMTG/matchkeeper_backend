@@ -15,6 +15,7 @@ mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopol
 
 //this makes the schema for the user
 const userProfileSchema = new mongoose.Schema({
+
     username: String,
     firstName: String,
     lastName: String,
@@ -26,45 +27,45 @@ const userProfileSchema = new mongoose.Schema({
   //applies the schema to a model
   export const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
 
-  // const deckSchema = new mongoose.Schema({ 
-  //   deckName : String,
-  //   cards : [cardSchema],
-  //   user : userProfileSchema,
-  //   deckWins : Number,
-  //   deckLosses : Number
-  // });
-  // export const deckModel = mongoose.model('Deck', deckSchema);
+  const cardSchema = new mongoose.Schema({ 
+    cardName : String,
+    cardImage : String,
+    cardFormats : [String],
+    cardData : [String]
+  });
+  export const cardModel = mongoose.model('Card', cardSchema);
 
-  // const cardSchema = new mongoose.Schema({ 
-  //   cardName : String,
-  //   deck : deckSchema,
-  //   cardImage : String,
-  //   cardFormats : [String],
-  //   cardData : [String]
-  // });
-  // export const cardModel = mongoose.model('Card', cardSchema);
+  const deckSchema = new mongoose.Schema({ 
+    deckName : String,
+    cards : [cardSchema],
+    user : userProfileSchema,
+    deckWins : Number,
+    deckLosses : Number
+  });
+  export const deckModel = mongoose.model('Deck', deckSchema);
 
-  // const eventSchema = new mongoose.Schema({ 
-  //   eventName : String,
-  //   location : String,
-  //   playerNum : Number,
-  //   maxPlayers : Number,
-  //   dateTime : Date,
-  //   owner : userProfileSchema,
-  //   bracket : [bracketSchema],
-  //   attendees : [userProfileSchema]
-  // });
-  // export const eventModel = mongoose.model('Event', eventSchema);
+  const bracketSchema = new mongoose.Schema({ 
+    bracketStyle : String,
+    gameFormat : String,
+    playerNum : Number,
+    maxPlayers : Number,
+    players : [userProfileSchema],
+  });
+  export const bracketModel = mongoose.model('Bracket', bracketSchema);
 
-  // const bracketSchema = new mongoose.Schema({ 
-  //   event : eventSchema,
-  //   bracketStyle : String,
-  //   gameFormat : String,
-  //   playerNum : Number,
-  //   maxPlayers : Number,
-  //   players : [userProfileSchema],
-  // });
-  // export const bracketModel = mongoose.model('Bracket', bracketSchema);
+  const eventSchema = new mongoose.Schema({ 
+    eventName : String,
+    location : String,
+    playerNum : Number,
+    maxPlayers : Number,
+    dateTime : Date,
+    owner : userProfileSchema,
+    bracket : [bracketSchema],
+    attendees : [userProfileSchema]
+  });
+  export const eventModel = mongoose.model('Event', eventSchema);
+
+//applies the schema to a model
 
 const app = express();
 
