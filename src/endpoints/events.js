@@ -5,6 +5,10 @@ import {eventModel} from "../index.js";
  * @param {express.Express} app 
  */
 export function eventEndpoints(app) {
+    /*
+    i completely forgot that you were doing events and i was doing brackets just accept your own changes over these when there's a merge
+    rip
+    */
     app.get('/api/event', async (req, res) => {
         const results = await eventModel.find();
 
