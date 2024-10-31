@@ -30,10 +30,11 @@ export function userEndpoints(app) {
     app.post('/api/user/:id', async (req, res) => {
 
         var query = {'firstName': 'Jerry'};
-        var newName = {'firstName': 'Freakazoid', 'lastName': 'Fragrance'};
+        var newName = {'firstName': 'yrreJ', 'lastName': 'Fragrance'};
+        console.log(req.params.id);
 
         await userProfileModel.findOneAndUpdate(query, newName, {upsert: false});
-        await res.send('Done');
+        res.send('Modify User');
     });
 
     app.post('/api/user/:id/stats', (req, res) => {
