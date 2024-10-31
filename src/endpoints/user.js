@@ -33,8 +33,15 @@ export function userEndpoints(app) {
     });
 
     app.post('/api/user/:id', async (req, res) => {
+        let username = req.body.username;
+        let firstName = req.body.firstName;
+        let lastName = req.body.lastName;
+        let userEmail = req.body.userEmail;
+        let password = req.body.password;
+        //let id = 'ObjectId'
+        let query = {'_id': ''};
 
-        let query = {'firstName': 'Jerry'};
+
         let newName = {'firstName': 'yrreJ', 'lastName': 'Fragrance'};
         console.log(req.params.id);
 
