@@ -1,5 +1,6 @@
 import 'express';
 import * as mongoose from 'mongoose';
+import { userProfileModel } from "../index.js";
 
 /**
  * @param {Express} app 
@@ -7,17 +8,17 @@ import * as mongoose from 'mongoose';
 
 //this is to test that this seperation will work for tjr project
 //this makes the schema for the user
-const userProfileSchema = new mongoose.Schema({
-    username: String,
-    firstName: String,
-    lastName: String,
-    userEmail: String,
-    password: String,
-    wins: Number,
-    losses: Number
-  });
-  //applies the schema to a model
-  const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
+// const userProfileSchema = new mongoose.Schema({
+//     username: String,
+//     firstName: String,
+//     lastName: String,
+//     userEmail: String,
+//     password: String,
+//     wins: Number,
+//     losses: Number
+//   });
+//   //applies the schema to a model
+//   const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
 
 
 
