@@ -1,8 +1,8 @@
-import 'express';
+import express from 'express';
 import {bracketModel} from '../index.js';
 
 /**
- * @param {Express} app 
+ * @param {express.Express} app 
  */
 export function bracketEndpoints(app) {
     app.post('/api/bracket', (req, res) => {

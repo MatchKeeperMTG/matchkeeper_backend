@@ -1,4 +1,4 @@
-import 'express';
+import express from 'express';
 import * as mongoose from 'mongoose';
 import { deckModel } from '../index.js';
 
@@ -8,7 +8,7 @@ import { deckModel } from '../index.js';
 // });
 
 /**
- * @param {Express} app 
+ * @param {express.Express} app 
  */
 export function deckEndpoints(app) {
     app.get('/api/card/url', (req, res) => {

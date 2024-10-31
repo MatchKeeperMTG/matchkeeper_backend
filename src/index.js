@@ -47,18 +47,6 @@ const cardSchema = new mongoose.Schema({
 });
 export const cardModel = mongoose.model('Card', cardSchema);
 
-const eventSchema = new mongoose.Schema({
-  eventID: Number,
-  eventName: String,
-  location: String,
-  playerNum: Number,
-  maxPlayers: Number,
-  dateTime: Date,
-  ownerID: Number,
-  bracketID: Number
-});
-export const eventModel = mongoose.model('Event', eventSchema);
-
 const bracketSchema = new mongoose.Schema({
   eventID: Number,
   bracketStyle: String,
@@ -69,6 +57,18 @@ const bracketSchema = new mongoose.Schema({
   bracketID: Number
 });
 export const bracketModel = mongoose.model('Bracket', bracketSchema);
+
+const eventSchema = new mongoose.Schema({
+  eventID: Number,
+  eventName: String,
+  location: String,
+  playerNum: Number,
+  maxPlayers: Number,
+  dateTime: Date,
+  ownerID: Number,
+  brackets: [bracketSchema]
+});
+export const eventModel = mongoose.model('Event', eventSchema);
 
 const app = express();
 

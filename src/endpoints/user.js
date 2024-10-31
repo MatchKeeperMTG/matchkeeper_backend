@@ -1,9 +1,9 @@
-import 'express';
+import express from 'express';
 import * as mongoose from 'mongoose';
 import { userProfileModel } from "../index.js";
 
 /**
- * @param {Express} app 
+ * @param {express.Express} app 
  */
 export function userEndpoints(app) {
     app.post('/api/user', async (req, res) => {
