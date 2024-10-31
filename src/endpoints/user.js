@@ -38,14 +38,11 @@ export function userEndpoints(app) {
         let lastName = req.body.lastName;
         let userEmail = req.body.userEmail;
         let password = req.body.password;
-        //let id = 'ObjectId'
-        let query = {'_id': ''};
-
-
-        let newName = {'firstName': 'yrreJ', 'lastName': 'Fragrance'};
-        console.log(req.params.id);
-
-        await userProfileModel.findOneAndUpdate(query, newName, {upsert: false});
+        let id = req.params.id;
+        let query = {'_id': id};
+        let newInfo = {'username': username, 'firstName': firstName, 'lastName': lastName, 
+            'userEmail': userEmail, 'password': password};
+        await userProfileModel.findOneAndUpdate(query, newInfo, {upsert: false});
         res.send('Modify User');
     });
 
