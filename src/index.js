@@ -12,63 +12,59 @@ if (process.env.MONGO_URL === undefined) {
 }
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
-// Schemas: deck, card, user, event, bracket?
-
 //this makes the schema for the user
 const userProfileSchema = new mongoose.Schema({
-  userID: Number,
-  username: String,
-  firstName: String,
-  lastName: String,
-  userEmail: String,
-  password: String,
-  wins: Number,
-  losses: Number
-});
+
+    username: String,
+    firstName: String,
+    lastName: String,
+    userEmail: String,
+    password: String,
+    wins: Number,
+    losses: Number
+  });
+  //applies the schema to a model
+  export const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
+
+  const cardSchema = new mongoose.Schema({ 
+    cardName : String,
+    cardImage : String,
+    cardFormats : [String],
+    cardData : [String]
+  });
+  export const cardModel = mongoose.model('Card', cardSchema);
+
+  const deckSchema = new mongoose.Schema({ 
+    deckName : String,
+    cards : [cardSchema],
+    user : userProfileSchema,
+    deckWins : Number,
+    deckLosses : Number
+  });
+  export const deckModel = mongoose.model('Deck', deckSchema);
+
+  const bracketSchema = new mongoose.Schema({ 
+    bracketStyle : String,
+    gameFormat : String,
+    playerNum : Number,
+    maxPlayers : Number,
+    players : [userProfileSchema],
+  });
+  export const bracketModel = mongoose.model('Bracket', bracketSchema);
+
+  const eventSchema = new mongoose.Schema({ 
+    eventName : String,
+    location : String,
+    playerNum : Number,
+    maxPlayers : Number,
+    dateTime : Date,
+    owner : userProfileSchema,
+    bracket : [bracketSchema],
+    attendees : [userProfileSchema]
+  });
+  export const eventModel = mongoose.model('Event', eventSchema);
+
 //applies the schema to a model
-export const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
-
-const deckSchema = new mongoose.Schema({
-  deckID: Number,
-  deckName: String,
-  cardNames: String,
-  userID: Number,
-  deckWins: Number,
-  deckLosses: Number
-});
-export const deckModel = mongoose.model('Deck', deckSchema);
-
-const cardSchema = new mongoose.Schema({
-  cardName: String,
-  deckID: Number,
-  cardImage: String,
-  cardFormats: String,
-  cardData: String
-});
-export const cardModel = mongoose.model('Card', cardSchema);
-
-const bracketSchema = new mongoose.Schema({
-  eventID: Number,
-  bracketStyle: String,
-  gameFormat: String,
-  playerNum: Number,
-  maxPlayers: Number,
-  userID: Number,
-  bracketID: Number
-});
-export const bracketModel = mongoose.model('Bracket', bracketSchema);
-
-const eventSchema = new mongoose.Schema({
-  eventID: Number,
-  eventName: String,
-  location: String,
-  playerNum: Number,
-  maxPlayers: Number,
-  dateTime: Date,
-  ownerID: Number,
-  brackets: [bracketSchema]
-});
-export const eventModel = mongoose.model('Event', eventSchema);
 
 const app = express();
 
@@ -98,3 +94,4 @@ async function main() {
 }
 
 main().catch(console.error);
+
