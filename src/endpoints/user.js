@@ -1,81 +1,66 @@
-import 'express';
+import express from 'express';
 import * as mongoose from 'mongoose';
 import { userProfileModel } from "../index.js";
 
 /**
- * @param {Express} app 
+ * @param {express.Express} app 
  */
-
-//this is to test that this seperation will work for tjr project
-//this makes the schema for the user
-// const userProfileSchema = new mongoose.Schema({
-//     username: String,
-//     firstName: String,
-//     lastName: String,
-//     userEmail: String,
-//     password: String,
-//     wins: Number,
-//     losses: Number
-//   });
-//   //applies the schema to a model
-//   const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
-
-
-
 export function userEndpoints(app) {
-    app.post('/api/user', (req, res) => {
-        res.send("Create User");
-
+    app.post('/api/user', async (req, res) => {
         //this is a test user, in future this will be filled with information from UI
+        let username = req.body.username;
+        let firstName = req.body.firstName;
+        let lastName = req.body.lastName;
+        let userEmail = req.body.userEmail;
+        let password = req.body.password;
         const testData = new userProfileModel({
-            username: "myUsername",
-            firstName: "Jerry",
-            lastName: "Subwoofer",
-            userEmail: "bigboom35@gmail.com",
-            password: "IfYouCantHearMeYoureDeaf",
+            username: username,
+            firstName: firstName,
+            lastName: lastName,
+            userEmail: userEmail,
+            password: password,
             wins: 0,
             losses: 0
-          });
-
-        //saves the data and displays in the console
-        testData.save()
-        .then(doc => {
-            console.log('Test document saved:', doc);
-        })
-        .catch(error => {
-            console.error('Error saving test document:', error);
         });
 
+        try {
+            await testData.save();
+            await res.send('User created.');
+        } catch {
+            console.log('Error saving test data');
+            await res.send('An error occurred.');
+        }
     });
 
-    app.post('/api/user/:id', (req, res) => {
-        res.send("Modify User");
-
-        const testData = userProfileModel.findOne({'firstName':'Jerry'});
-
-        //saves the data and displays in the console
-        testData.save()
-        .then(doc => {
-            console.log('Test document saved:', doc);
-        })
-        .catch(error => {
-            console.error('Error saving test document:', error);
-        });
+    app.post('/api/user/:id', async (req, res) => {
+        let username = req.body.username;
+        let firstName = req.body.firstName;
+        let lastName = req.body.lastName;
+        let userEmail = req.body.userEmail;
+        let password = req.body.password;
+        let id = req.params.id;
+        let query = {'_id': id};
+        let newInfo = {'username': username, 'firstName': firstName, 'lastName': lastName, 
+            'userEmail': userEmail, 'password': password};
+        await userProfileModel.findOneAndUpdate(query, newInfo, {upsert: false});
+        res.send('Modify User');
     });
 
     app.post('/api/user/:id/stats', (req, res) => {
-        res.send("Update Statistics");
+        res.send('Update Statistics');
     })
 
     app.get('/api/user/:id/stats', (req, res) => {
-        res.send("Get User Winrate by UserName");
+        res.send('Get User Winrate by UserName');
     });
 
-    app.delete('/api/user/:id', (req, res) => {
-        res.send("Delete User");
+    app.delete('/api/user/:id', async (req, res) => {
+        let query = {'firstName': 'yrreJ'};
+        await userProfileModel.deleteOne(query);
+        res.send('Delete User');
     });
 
     app.get('/api/user/:id', (req, res) => {
-        res.send("Get all User Info by UserName");
+        res.send('Get all User Info by UserName');
     });
 }
