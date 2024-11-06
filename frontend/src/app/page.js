@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [cards, setCards] = useState([]);
-  const [search, setSearch] = useState("");
+  const search = "man";
 
   useEffect(() => {
     fetch('https://api.scryfall.com/cards/search?q=' + encodeURIComponent(search))
@@ -18,7 +18,7 @@ export default function Home() {
 
   return (
     <div>
-      <input value={search} onChange={event => setSearch(event.target.value)} />
+      {/* <input value={search} onChange={event => setSearch(event.target.value)} /> */}
       <div className="deckContainer">
         {cards.map((card, i) => {
           return <CardViewer cardID={card.id} key={i} style={{ zIndex: i }} className="card-slide" />
