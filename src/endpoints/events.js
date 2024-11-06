@@ -5,10 +5,6 @@ import {eventModel} from "../index.js";
  * @param {express.Express} app 
  */
 export function eventEndpoints(app) {
-    /*
-    i completely forgot that you were doing events and i was doing brackets just accept your own changes over these when there's a merge
-    rip
-    */
     app.get('/api/event', async (req, res) => {
         const results = await eventModel.find();
 
@@ -24,7 +20,7 @@ export function eventEndpoints(app) {
             });
         }
 
-        await res.send(resultsModified);
+        res.send(resultsModified);
     });
 
     /**
@@ -46,25 +42,25 @@ export function eventEndpoints(app) {
 
         if(body.eventName === undefined) {
             res.status(400);
-            await res.send({"error": "'name' field not specified."});
+            res.send({"error": "'name' field not specified."});
             return;
         }
 
         if(body.location === undefined) {
             res.status(400);
-            await res.send({"error": "'location' field not specified."});
+            res.send({"error": "'location' field not specified."});
             return;
         }
 
         if(body.maxPlayers === undefined) {
             res.status(400);
-            await res.send({"error": "'maxPlayers' field not specified."});
+            res.send({"error": "'maxPlayers' field not specified."});
             return;
         }
 
         if(body.dateTime === undefined) {
             res.status(400);
-            await res.send({"error": "'dateTime' field not specified."});
+            res.send({"error": "'dateTime' field not specified."});
             return;
         }
 
@@ -97,7 +93,8 @@ export function eventEndpoints(app) {
         const body = req.body;
 
         if(!await eventModel.findOne({"_id": req.params.id})) {
-            await res.send({"error": "No such event."});
+            res.status(404);
+            res.send({"error": "No such event."});
             return;
         }
 
@@ -110,17 +107,18 @@ export function eventEndpoints(app) {
             "dateTime": body.dateTime
         });
 
-        await res.send({});
+        res.send({});
     });
 
     app.delete('/api/event/:id', async (req, res) => {
         if(!await eventModel.findOne({"_id": req.params.id})) {
-            await res.send({"error": "No such event."});
+            res.status(404);
+            res.send({"error": "No such event."});
             return;
         }
         
         await eventModel.deleteOne({"_id": req.params.id});
-        await res.send({});
+        res.send({});
     });
 
     app.get('/api/event/:id', (req, res) => {

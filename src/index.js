@@ -82,7 +82,7 @@ bracketEndpoints(app);
 deckEndpoints(app);
 
 // Serve frontend
-app.use('/', express.static('frontend/dist'));
+app.use('/', express.static('frontend/.next/server/app'));
 
 app.get('/status', (req, res) => {
   res.send('OK');
