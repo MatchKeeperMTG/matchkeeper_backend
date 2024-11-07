@@ -1,6 +1,7 @@
 import express from 'express';
-import {eventModel} from "../index.js";
+import {eventModel, userProfileModel} from "../index.js";
 import { isID } from "../index.js";
+import * as mongoose from 'mongoose';
 
 /**
  * @param {express.Express} app 
@@ -140,16 +141,47 @@ export function eventEndpoints(app) {
         }
     });
 
-    app.get('/api/event/:id/players', (req, res) => {
+    app.get('/api/event/:id/players', async (req, res) => {
+        //Get players in event
         res.send('Get Players');
     });
 
-    app.post('/api/event/:id/players', (req, res) => {
-        
-        res.send('Add Players');
+    app.post('/api/event/:id/players', async (req, res) => {
+        //Add player(s) to event
+        let id = req.params.id;
+        //If event exists:
+        if(isID(id) && await eventModel.findOne({"_id": id})){
+            let event = await eventModel.findOne({"_id": id});
+            let eventPlayers = event.attendees;
+            //Loops through each player inputted:
+            for (const player of req.body.players){
+                const query = userProfileModel.where({"username": player});
+                const playerQuery = await query.findOne();
+                //If player exists:
+                if (playerQuery){
+                    if (eventPlayers.includes(playerQuery._id)){
+                        console.log("Player ", player, " already in event");
+                    }
+                    else{
+                        event.attendees.push(playerQuery._id);
+                        console.log("Player ", player, " added to event!");
+                    }
+                }
+                else{
+                    console.log("Player ", player, " not found!");
+                }
+            }
+            event.save();
+            res.send("Added players to events");
+        }
+        else{
+            res.send("Event does not exist");
+            return;
+        }
     });
 
-    app.delete('/api/event/:id/players', (req, res) => {
+    app.delete('/api/event/:id/players', async (req, res) => {
+        //Remove player from event
         res.send('Remove Players');
     });
 

@@ -8,6 +8,7 @@ import { isID } from '../index.js';
  */
 export function userEndpoints(app) {
     app.post('/api/user', async (req, res) => {
+        //Create user
         let username = req.body.username;
         let firstName = req.body.firstName;
         let lastName = req.body.lastName;
@@ -49,6 +50,7 @@ export function userEndpoints(app) {
     });
 
     app.post('/api/user/:id', async (req, res) => {
+        //Modify User
         let id = req.params.id;
         if (isID(id) && await userProfileModel.findOne({"_id": req.params.id})){
             let username = req.body.username;
@@ -82,6 +84,7 @@ export function userEndpoints(app) {
     });
 
     app.post('/api/user/:id/stats', async (req, res) => {
+        //Update user statistics
         let id = req.params.id;
         if (isID(id) && await userProfileModel.findOne({"_id": req.params.id})){
             let wins = req.body.wins;
@@ -98,6 +101,7 @@ export function userEndpoints(app) {
     })
 
     app.get('/api/user/:id/stats', async(req, res) => {
+        //Get user winrate (by username or ID)
         let id = req.params.id;
         let username = req.body.username;
         let query, user;
@@ -124,6 +128,7 @@ export function userEndpoints(app) {
     });
 
     app.delete('/api/user/:id', async (req, res) => {
+        //Delete user
         let id = req.params.id;
         if (isID(id) && await userProfileModel.findOne({"_id": req.params.id})){
             let query = {'_id': id};
@@ -137,6 +142,7 @@ export function userEndpoints(app) {
     });
 
     app.get('/api/user/:id', async (req, res) => {
+        //Get all info by username
         let id = req.params.id;
         let username = req.body.username;
         let query, user;

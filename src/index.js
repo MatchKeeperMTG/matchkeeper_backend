@@ -60,7 +60,7 @@ const userProfileSchema = new mongoose.Schema({
     dateTime : Date,
     owner : userProfileSchema,
     bracket : [bracketSchema],
-    attendees : [userProfileSchema]
+    attendees : [mongoose.Schema.Types.ObjectId]
   });
   export const eventModel = mongoose.model('Event', eventSchema);
 
