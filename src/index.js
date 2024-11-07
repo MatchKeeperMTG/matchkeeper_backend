@@ -87,6 +87,15 @@ app.get('/status', (req, res) => {
   res.send('OK');
 });
 
+export function isID(id){
+  if (mongoose.isValidObjectId(id)){
+      return true;
+  }
+  else{
+      return false;
+  }
+}
+
 async function main() {
   const host = process.env.SERVER_HOST ?? 'localhost';
   const port = process.env.SERVER_PORT ?? 8080;

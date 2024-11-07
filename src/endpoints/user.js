@@ -1,6 +1,7 @@
 import express from 'express';
 import * as mongoose from 'mongoose';
 import { userProfileModel } from "../index.js";
+import { isID } from '../index.js';
 
 /**
  * @param {express.Express} app 
@@ -162,11 +163,3 @@ export function userEndpoints(app) {
     });
 }
 
-function isID(id){
-    if (mongoose.isValidObjectId(id)){
-        return true;
-    }
-    else{
-        return false;
-    }
-}

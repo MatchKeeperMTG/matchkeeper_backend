@@ -3,17 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "cross-env MKPR_ENV=live next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "next": "15.0.1",
     "react": "19.0.0-rc-69d4b800-20241021",
-    "react-dom": "19.0.0-rc-69d4b800-20241021",
-    "next": "15.0.1"
+    "react-dom": "19.0.0-rc-69d4b800-20241021"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "postcss": "^8",
     "tailwindcss": "^3.4.1"
   }
