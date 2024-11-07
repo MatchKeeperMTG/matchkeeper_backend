@@ -48,7 +48,10 @@ const userProfileSchema = new mongoose.Schema({
     gameFormat : String,
     playerNum : Number,
     maxPlayers : Number,
-    players : [userProfileSchema],
+    players : {
+      type: userProfileSchema,
+      ref: 'userProfileModel'
+    },
   });
   export const bracketModel = mongoose.model('Bracket', bracketSchema);
 
