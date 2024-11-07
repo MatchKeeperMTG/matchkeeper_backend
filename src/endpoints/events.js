@@ -1,11 +1,14 @@
 import express from 'express';
 import {eventModel} from "../index.js";
+import { isID } from "../index.js";
 
 /**
  * @param {express.Express} app 
  */
 export function eventEndpoints(app) {
+
     app.get('/api/event', async (req, res) => {
+        //Get all events
         const results = await eventModel.find();
 
         let resultsModified = [];
@@ -37,35 +40,35 @@ export function eventEndpoints(app) {
      *  "id": string, // The unique ID of the created event
      * }
      */
-    app.post('/api/event', async (req, res) => {
+    app.post('/api/event/', async (req, res) => {
+        //Create event
         const body = req.body;
 
         if(body.eventName === undefined) {
             res.status(400);
-            res.send({"error": "'name' field not specified."});
+            await res.send({"error": "'name' field not specified."});
             return;
         }
 
         if(body.location === undefined) {
             res.status(400);
-            res.send({"error": "'location' field not specified."});
+            await res.send({"error": "'location' field not specified."});
             return;
         }
 
         if(body.maxPlayers === undefined) {
             res.status(400);
-            res.send({"error": "'maxPlayers' field not specified."});
+            await res.send({"error": "'maxPlayers' field not specified."});
             return;
         }
 
         if(body.dateTime === undefined) {
             res.status(400);
-            res.send({"error": "'dateTime' field not specified."});
+            await res.send({"error": "'dateTime' field not specified."});
             return;
         }
 
         const newEvent = new eventModel({
-            "eventID": -1000,
             "eventName": body.eventName,
             "location": body.location,
             "playerNum": 0,
@@ -75,7 +78,7 @@ export function eventEndpoints(app) {
             "brackets": []
         });
         await newEvent.save();
-
+        console.log(newEvent._id);
         res.send({"id": newEvent._id});
     });
 
@@ -90,39 +93,51 @@ export function eventEndpoints(app) {
      * }
      */
     app.put('/api/event/:id', async (req, res) => {
+        //Modify Event
         const body = req.body;
+        let id = req.params.id;
 
-        if(!await eventModel.findOne({"_id": req.params.id})) {
-            res.status(404);
+        if(isID(id) && await eventModel.findOne({"_id": id})) {
+            await eventModel.findOneAndUpdate({
+                "_id": id
+            }, {
+                "eventName": body.eventName,
+                "location": body.location,
+                "maxPlayers": body.maxPlayers,
+                "dateTime": body.dateTime
+            });
+            res.send("Event updated");            
+        }
+        else{
             res.send({"error": "No such event."});
             return;
-        }
-
-        await eventModel.findOneAndUpdate({
-            "_id": req.params.id
-        }, {
-            "eventName": body.eventName,
-            "location": body.location,
-            "maxPlayers": body.maxPlayers,
-            "dateTime": body.dateTime
-        });
-
-        res.send({});
+        }        
     });
 
     app.delete('/api/event/:id', async (req, res) => {
-        if(!await eventModel.findOne({"_id": req.params.id})) {
-            res.status(404);
+        //Delete an event
+        let id = req.params.id;
+        if(isID(id) && await eventModel.findOne({"_id": id})) {
+            await eventModel.deleteOne({"_id": id});
+            res.send({});
+        }
+        else{
             res.send({"error": "No such event."});
             return;
         }
-        
-        await eventModel.deleteOne({"_id": req.params.id});
-        res.send({});
     });
 
-    app.get('/api/event/:id', (req, res) => {
-        res.send('Get Event Details');
+    app.get('/api/event/:id', async (req, res) => {
+        //Get event details
+        let id = req.params.id;
+        if(isID(id) && await eventModel.findOne({"_id": id})){
+            let result = await eventModel.findOne({"_id": id});
+            res.send(result);
+        }
+        else{
+            res.send({"error": "No such event."});
+            return;
+        }
     });
 
     app.get('/api/event/:id/players', (req, res) => {
@@ -130,6 +145,7 @@ export function eventEndpoints(app) {
     });
 
     app.post('/api/event/:id/players', (req, res) => {
+        
         res.send('Add Players');
     });
 
@@ -137,27 +153,27 @@ export function eventEndpoints(app) {
         res.send('Remove Players');
     });
 
-    app.post('/api/event/:id/decks', (req, res) => {
-        res.send('Add Deck to Event');
-    });
+    // app.post('/api/event/:id/decks', (req, res) => {
+    //     res.send('Add Deck to Event');
+    // });
 
-    app.delete('/api/event/:id/decks', (req, res) => {
-        res.send('Remove Deck from Event');
-    });
+    // app.delete('/api/event/:id/decks', (req, res) => {
+    //     res.send('Remove Deck from Event');
+    // });
 
-    app.get('/api/event/:id/decks', (req, res) => {
-        res.send('View Decks from Event Library');
-    });
+    // app.get('/api/event/:id/decks', (req, res) => {
+    //     res.send('View Decks from Event Library');
+    // });
 
-    app.get('/api/event/:id/bannedCards', (req, res) => {
-        res.send('View Banned Cards');
-    });
+    // app.get('/api/event/:id/bannedCards', (req, res) => {
+    //     res.send('View Banned Cards');
+    // });
 
-    app.post('/api/event/:id/bannedCards', (req, res) => {
-        res.send('Add Banned Card');
-    });
+    // app.post('/api/event/:id/bannedCards', (req, res) => {
+    //     res.send('Add Banned Card');
+    // });
 
-    app.delete('/api/event/:id/bannedCards', (req, res) => {
-        res.send('Unban Card');
-    });
+    // app.delete('/api/event/:id/bannedCards', (req, res) => {
+    //     res.send('Unban Card');
+    // });
 }
