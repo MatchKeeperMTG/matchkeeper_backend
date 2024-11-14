@@ -1,30 +1,24 @@
 import express from 'express';
+import * as mongoose from "mongoose";
+import {isID} from "../index.js";
 import {bracketModel} from '../index.js';
+import { userProfileModel } from '../index.js';
 
 /**
  * @param {express.Express} app 
  */
 export function bracketEndpoints(app) {
-    app.post('/api/bracket', async (req, res) => {
-        console.log(req.body);
 
-        //this is the schema for my reference atm
-        // const bracketSchema = new mongoose.Schema({ 
-        //     bracketStyle : String,
-        //     gameFormat : String,
-        //     playerNum : Number,
-        //     maxPlayers : Number,
-        //     players : [userProfileSchema],
+    //Create Bracket
+    app.post('/api/bracket', async (req, res) => {
 
         let bracketStyle = req.body.bracketStyle;
         let gameFormat = req.body.gameFormat;
         let playerNum = req.body.playerNum;
         let maxPlayers = req.body.maxPlayers;
-        let players = req.body.players;
+        let players = [];
 
-        
-
-        const newBracket = new BracketModel({
+        const newBracket = new bracketModel({
             bracketStyle : bracketStyle,
             gameFormat : gameFormat,
             playerNum : playerNum,
@@ -45,14 +39,153 @@ export function bracketEndpoints(app) {
         
     });
 
-    app.post('/api/bracket/:id', (req, res) => {
-        res.send('Edit Bracket');
+    //Edit Bracket
+    app.post('/api/bracket/:id', async (req, res) => {
+
+    
+        //check to make sure the ID is valid and the bracket object exists
+        let id = req.params.id;
+        if(isID(id) && await bracketModel.findOne({"_id":id})){
+            let bracketStyle = req.body.bracketStyle;
+            let gameFormat = req.body.gameFormat;
+            let playerNum = req.body.playerNum;
+            let maxPlayers = req.body.maxPlayers;
+            
+
+            let query = {'_id': id};
+
+            let newInfo = {'bracketStyle': bracketStyle, 'gameFormat': gameFormat,
+             'playerNum': playerNum, 'maxPlayers': maxPlayers};
+            
+            await bracketModel.findOneAndUpdate(query, newInfo, {upsert:false} );
+
+
+            res.send('Edit Bracket');
+            return;
+
+            
+        }
+
+        //if there is an error
+        console.log('Failed Bracket Edit');
+        await res.send('Failed Bracket Edit');
+        
+        
     });
 
-    app.delete('/api/bracket/:id', (req, res) => {
-        res.send('Delete Bracket');
+
+    //Delete Bracket
+    app.delete('/api/bracket/:id', async (req, res) => {
+        let id = req.params.id;
+        if(isID(id) && await bracketModel.findOne({"_id":id})){
+            await bracketModel.findByIdAndDelete({"_id":id});
+            res.send("Bracket deleted!");
+        }
+        else
+        {
+            res.send("Bracket not found");
+        }
     });
 
+    //Add Player to bracket
+    app.post('/api/bracket/:id/players', async (req, res) => {
+        
+        //check to make sure the ID is valid and the bracket object exists
+        let id = req.params.id;
+        if(isID(id) && await bracketModel.findOne({"_id":id}))
+        {
+            let inputBracket = await bracketModel.findById({"_id": id});
+            let players = inputBracket.players;
+            let playerToAdd = req.body.playerID;
+
+            //validate userID sent
+            if(!(isID(id) && await userProfileModel.findOne({"_id":playerToAdd})))
+            {
+                res.send("invalid PlayerID sent");
+                return;
+            }
+
+            //check to see if the bracket is at maximum capacity
+            if(inputBracket.maxPlayers == inputBracket.playerNum)
+            {
+                res.send("Bracket is at maximum capacity");
+                return;
+            }
+
+            //check to see if the player is already in the bracket
+            for(const player of players)
+            {
+                if(player._id == playerToAdd)
+                {
+                    console.log("User is already in bracket");
+                    res.send("User is already in bracket");
+                    return;
+                }
+                
+            }
+
+            //if they are not add them to it
+            let newPlayer = await userProfileModel.findById({"_id": playerToAdd});
+            inputBracket.players.push(newPlayer);
+            inputBracket.playerNum += 1;
+
+            //save the data and exit
+            inputBracket.save();
+            res.send("Player added to bracket");
+            return;
+
+        }
+        
+        res.send('Failed to add player');
+
+    });
+
+    //Remove Player from bracket
+    app.delete('/api/bracket/:id/players', async (req, res) => {
+
+        //check to make sure the ID is valid and the bracket object exists
+        let id = req.params.id;
+        if(isID(id) && await bracketModel.findOne({"_id":id}))
+        {
+            let inputBracket = await bracketModel.findById({"_id": id});
+            let players = inputBracket.players;
+            let playerToAdd = req.body.playerID;
+
+            //validate userID sent
+            if(!(isID(id) && await userProfileModel.findOne({"_id":playerToAdd})))
+            {
+                res.send("invalid PlayerID sent");
+                return;
+            }
+
+
+            //find player in bracket
+            for(const player of players)
+            {
+                //if found remove them
+                if(player._id == playerToAdd)
+                {
+                    inputBracket.players.remove(player);
+                    inputBracket.playerNum -= 1;
+                    //save the data and exit
+                    inputBracket.save();
+                    res.send("Player removed from bracket");
+                    return;
+                }
+                
+            }
+
+            res.send("Player not in bracket");
+            return;
+
+
+            
+
+        }
+        res.send('Bracket not found');
+    });
+
+    //Set Results of the bracket
     app.post('/api/bracket/:id/results', (req, res) => {
         res.send('Set Win');
     });

@@ -36,8 +36,8 @@ const userProfileSchema = new mongoose.Schema({
 
   const deckSchema = new mongoose.Schema({ 
     deckName : String,
-    cards : [cardSchema],
-    user : userProfileSchema,
+    cards : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Card' }],
+    user : {type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'},
     deckWins : Number,
     deckLosses : Number
   });
@@ -48,7 +48,10 @@ const userProfileSchema = new mongoose.Schema({
     gameFormat : String,
     playerNum : Number,
     maxPlayers : Number,
-    players : [userProfileSchema],
+    players : [{
+      type: userProfileSchema,
+      ref: 'userProfileModel'
+    }],
   });
   export const bracketModel = mongoose.model('Bracket', bracketSchema);
 
@@ -60,7 +63,7 @@ const userProfileSchema = new mongoose.Schema({
     dateTime : Date,
     owner : userProfileSchema,
     bracket : [bracketSchema],
-    attendees : [userProfileSchema]
+    attendees : [mongoose.Schema.Types.ObjectId]
   });
   export const eventModel = mongoose.model('Event', eventSchema);
 
@@ -83,6 +86,15 @@ app.use('/', express.static('frontend/dist'));
 app.get('/status', (req, res) => {
   res.send('OK');
 });
+
+export function isID(id){
+  if (mongoose.isValidObjectId(id)){
+      return true;
+  }
+  else{
+      return false;
+  }
+}
 
 async function main() {
   const host = process.env.SERVER_HOST ?? 'localhost';
