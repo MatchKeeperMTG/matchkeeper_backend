@@ -36,8 +36,8 @@ const userProfileSchema = new mongoose.Schema({
 
   const deckSchema = new mongoose.Schema({ 
     deckName : String,
-    cards : [cardSchema],
-    user : userProfileSchema,
+    cards : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Card' }],
+    user : {type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'},
     deckWins : Number,
     deckLosses : Number
   });

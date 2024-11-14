@@ -1,53 +1,95 @@
 'use client'
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 
 /**
- * 
- * @param {{cardID: string, style: React.CSSProperties, className: string}} props 
+ * @param {{
+ *   cardID?: string,
+ *   card?: Object,
+ *   style?: React.CSSProperties,
+ *   className?: string,
+ *   zIndex?: number,
+ *   id?: string,
+ *   onClick?: React.MouseEventHandler<HTMLImageElement>
+ * }} props 
  */
 export default function CardViewer(props) {
     const [data, setData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
     const [isHovered, setIsHovered] = useState(false);
+    const imgRef = useRef(null);
 
     useEffect(() => {
-        console.log('https://api.scryfall.com/cards/' + props.cardID);
+        // If a full card object is provided, use it directly
+        if (props.card) {
+            setData(props.card);
+            return;
+        }
+
+        // Otherwise, fetch by ID if provided
         if (props.cardID !== undefined) {
+            setIsLoading(true);
+            setError(null);
+
             fetch('https://api.scryfall.com/cards/' + props.cardID)
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error('Failed to fetch card');
+                    return res.json();
+                })
                 .then(json => {
-                    console.log(json);
+                    if (!json.image_uris) {
+                        throw new Error('Card image not found');
+                    }
                     setData(json);
                 })
                 .catch(error => {
-                    console.log(data);
-
                     console.error(error);
+                    setError(error.message);
                     setData(null);
+                })
+                .finally(() => {
+                    setIsLoading(false);
                 });
         }
-    }, [props.cardID]);
+    }, [props.cardID, props.card]);
 
-    if (!data) {
-        return (<div>Loading...</div>);
-    } else {
-        if (data.image_uris === undefined) {
-            setData(null);
-            return (<div>Error!</div>);
-        }
+    if (isLoading) {
         return (
-            <img
-                src={data.image_uris.normal}
-                alt={data.name}
-                className={"cardImage " + props.className}
-                onMouseEnter={() => {
-                    setIsHovered(true);
-                }}
-                onMouseLeave={() => {
-                    setIsHovered(false);
-                }}
-                style={{zIndex: props.zIndex}}
-            />
+            <div className="text-center py-4">
+                <div className="inline-block animate-spin rounded-full h-6 w-6 border-4 border-gray-300 border-t-blue-600"></div>
+                <p className="mt-2 text-gray-600">Loading card...</p>
+            </div>
         );
     }
+
+    if (error) {
+        return (
+            <div className="text-center py-4 text-red-600">
+                <p>{error}</p>
+            </div>
+        );
+    }
+
+    if (!data || !data.image_uris) {
+        return null;
+    }
+
+    return (
+        <img
+            ref={imgRef}
+            src={data.image_uris.large}
+            alt={data.name}
+            id={props.id}
+            className={"cardImage " + props.className}
+            onMouseEnter={() => {
+                setIsHovered(true);
+            }}
+            onMouseLeave={() => {
+                setIsHovered(false);
+            }}
+            onClick={props.onClick}
+            style={{zIndex: props.zIndex}}
+        />
+    );
 }

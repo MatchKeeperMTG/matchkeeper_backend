@@ -10,24 +10,101 @@ body {
 .deckContainer {
   display: flex;
   flex-direction: row;
+  flex-wrap: nowrap;
+  padding: 4em 2em;
+  margin: 0 -2em; /* Compensate for the padding to align with parent */
+  align-items: center;
+  width: calc(100% + 4em); /* Compensate for negative margins */
+  min-height: fit-content;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  gap: 0.5em; /* Add some spacing between cards */
+  align-items: center;
+}
 
-  flex-grow: 1;
-  height: inherit;
+/* Improved scrollbar styling */
+.deckContainer::-webkit-scrollbar {
+  height: 12px;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+}
+
+.deckContainer::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 6px;
+  margin: 0 2em;
+}
+
+.deckContainer::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+  border: 3px solid #f1f1f1;
+}
+
+.deckContainer::-webkit-scrollbar-thumb:hover {
+  background: #666;
 }
 
 .deckContainer > .cardImage {
-  margin-right: -5em;
+  margin-right: -3.5em;  /* Reduce overlap */
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0; /* Prevent cards from shrinking */
 }
 
 .cardImage {
   width: 10em;
+  transform-origin: center left;  /* Card grows from the left */
 }
 
-.card-slide {
-  transition: transform 0.3s ease;
+/* Hover trigger area */
+/* .cardImage::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4.5em;
+  height: 100%;
+  z-index: 1;
+} */
+
+/* Only apply hover effect when hovering the trigger area */
+/* .cardImage:hover:not(.cardFocus) {
+  transform: scale(1.4) translateY(-2%);
+  z-index: 10;
+  margin-right: -2em;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+} */
+
+/* Shift subsequent cards to the right when a card is hovered */
+/* .cardImage:hover ~ .cardImage {
+  transform: translateX(2.5em);  
+  transition-duration: 0.2s; 
+} */
+
+/* Shift subsequent cards to the right when a card is hovered */
+.cardFocus ~ .cardImage {
+  transform: translateX(2.5em);  /* Slightly increased shift */
+  transition-duration: 0.2s;  /* Faster transition for subsequent cards */
 }
 
-.card-slide:hover {
-  transform: scale(1.5) translate(0, 25%);
-  z-index: 100;
+/* Add a subtle transition for cards returning to their original position */
+.cardImage:not(:hover) {
+  transition-duration: 0.3s;  /* Slower transition when returning */
+}
+
+/* Card focusing style */
+.cardFocus {
+  transform: scale(1.4) translateY(-2%);
+  z-index: 10;
+  margin-right: -2em;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.cardImage:fullscreen:hover {
+  transform: none;
+  margin: 0;
+  box-shadow: none;
 }
