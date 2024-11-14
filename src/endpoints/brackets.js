@@ -199,18 +199,20 @@ export function bracketEndpoints(app) {
             let counter = 0;
             for(const player in playerUsernames)
             {
-                console.log(player);
-                if(!(isID(id) && await userProfileModel.findOne({"username":playerUsernames[player]})))
+                //verify that the player with that username exists
+                if(!(await userProfileModel.findOne({"username":playerUsernames[player]})))
                 {
                     res.status(400);
                     res.send({"error":"invalid playerUsername sent"});
                     return;
                 }
 
+                //update that persons wins
                 let playerObject = await userProfileModel.findOne({"username":playerUsernames[player]});
                 playerObject.wins += wins[counter];
                 playerObject.losses += losses[counter];
 
+                //save the result
                 try{
                     playerObject.save();
                 }
@@ -219,7 +221,7 @@ export function bracketEndpoints(app) {
                     res.send({"error" :" error saving Player Data"})
                 }
                 
-
+                //increment the counter for wins and losses lists
                 counter++;
             }
 
