@@ -186,7 +186,47 @@ export function bracketEndpoints(app) {
     });
 
     //Set Results of the bracket
-    app.post('/api/bracket/:id/results', (req, res) => {
-        res.send('Set Win');
+    app.post('/api/bracket/:id/results', async (req, res) => {
+        
+        let id = req.params.id;
+        if(isID(id) && await bracketModel.findOne({"_id":id}))
+        {
+            let playerUsernames = req.body.playerUsernames;
+            let wins = req.body.wins;
+            let losses = req.body.losses;
+
+            //create a loop to edit all users wins and losses
+            let counter = 0;
+            for(const player in playerUsernames)
+            {
+                console.log(player);
+                if(!(isID(id) && await userProfileModel.findOne({"username":playerUsernames[player]})))
+                {
+                    res.status(400);
+                    res.send({"error":"invalid playerUsername sent"});
+                    return;
+                }
+
+                let playerObject = await userProfileModel.findOne({"username":playerUsernames[player]});
+                playerObject.wins += wins[counter];
+                playerObject.losses += losses[counter];
+
+                try{
+                    playerObject.save();
+                }
+                catch{
+                    res.status(500);
+                    res.send({"error" :" error saving Player Data"})
+                }
+                
+
+                counter++;
+            }
+
+            res.send("results updated");
+            return;
+        }
+
+        res.send("bracket not found");
     });
 }
