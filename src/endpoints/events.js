@@ -24,7 +24,9 @@ export function eventEndpoints(app) {
             });
         }
 
-        res.send(resultsModified);
+        res.status(200);
+        res.send({'message': 'returning all events',
+            'data':resultsModified});
     });
 
     /**
@@ -87,7 +89,9 @@ export function eventEndpoints(app) {
         });
         await newEvent.save();
         console.log(newEvent._id);
-        res.send({"id": newEvent._id});
+        res.status(200);
+        res.send({'message': 'returning Event ID',
+            'data':{"id": newEvent._id}});
     });
 
     /**
@@ -122,7 +126,8 @@ export function eventEndpoints(app) {
                 "maxPlayers": body.maxPlayers,
                 "dateTime": body.dateTime
             });
-            res.send("Event updated");            
+            res.status(200);
+            res.send({"message":"Event updated"});            
         }
         else{
             res.status(400);
@@ -136,7 +141,8 @@ export function eventEndpoints(app) {
         let id = req.params.id;
         if(isID(id) && await eventModel.findOne({"_id": id})) {
             await eventModel.deleteOne({"_id": id});
-            res.send({});
+            res.status(200);
+            res.send({"message":"event deleted"});
         }
         else{
             res.status(400);
@@ -150,7 +156,9 @@ export function eventEndpoints(app) {
         let id = req.params.id;
         if(isID(id) && await eventModel.findOne({"_id": id})){
             let result = await eventModel.findOne({"_id": id});
-            res.send(result);
+            res.status(200);
+            res.send({'message':'returning result',
+                'data':result});
         }
         else{
             res.status(400);
@@ -183,7 +191,9 @@ export function eventEndpoints(app) {
                     removeEvent.save();
                 }
             }
-            res.send(ret);
+            res.status(200);
+            res.send({'message':'returning players in event',
+                'data':ret});
         }
         else{
             res.status(400);
@@ -217,7 +227,8 @@ export function eventEndpoints(app) {
                 }
             }
             event.save();
-            res.send("Added players to events");
+            res.status(200);
+            res.send({"message":"Added players to events"});
         }
         else{
             res.status(400);
@@ -243,9 +254,12 @@ export function eventEndpoints(app) {
                     event.attendees = players;
                     event.save();
                 }
-                res.send(event.attendees);
+                res.status(200);
+                res.send({'message':'removed player from attendees',
+                    'data':event.attendees});
             }else{
-                res.send("Player not in event");
+                res.status(400);
+                res.send({"error":"Player not in event"});
             }
         }
         else{

@@ -14,11 +14,13 @@ export function userEndpoints(app) {
         let nameCount = await queryUsername.countDocuments();
         let emailCount = await queryEmail.countDocuments();
         if (nameCount > 0){
-            res.send("Username already exists");
+            res.status(400);
+            res.send({"error":"Username already exists"});
             return;
         }
         else if (emailCount > 0){
-            res.send("Email already in use");
+            res.status(400);
+            res.send({"error":"Email already in use"});
             return;
         }
         else{
@@ -35,10 +37,12 @@ export function userEndpoints(app) {
             try {
                 await newUser.save();
                 console.log(newUser._id);
-                await res.send('User created.');
+                res.status(201);
+                await res.send({'error':'User created.'});
             } catch {
                 console.log('Error saving test data');
-                await res.send('An error occurred.');
+                res.status(500);
+                await res.send({'error':'An error occurred.'});
             }
         }
 
@@ -55,11 +59,13 @@ export function userEndpoints(app) {
             let nameCount = await queryUsername.countDocuments();
             let emailCount = await queryEmail.countDocuments();
             if (nameCount > 0){
-                res.send("Username already exists");
+                res.status(400);
+                res.send({"error":"Username already exists"});
                 return;
             }
             else if (emailCount > 0){
-                res.send("Email already in use");
+                res.status(400);
+                res.send({"message":"Email already in use"});
                 return;
             }
             
@@ -67,10 +73,12 @@ export function userEndpoints(app) {
                     'username': req.body.username, 'firstName': req.body.firstName, 'lastName': req.body.lastName,
                     'userEmail': userEmail, 'password': req.body.password
                 }, {upsert: false});
-            res.send('Modify User');
+            res.status(200);
+            res.send({'message':'Modify User'});
         }
         else{
-            res.send('User not found');
+            res.status(400);
+            res.send({'error':'User not found}'});
         }
     });
 
@@ -83,10 +91,12 @@ export function userEndpoints(app) {
             let query = userProfileModel.where({'_id': id});
             let newInfo = {'wins': wins, 'losses': losses};
             await userProfileModel.findByIdAndUpdate(id, newInfo, {upsert:false});
-            res.send('Update Statistics');
+            res.status(200);
+            res.send({'error':'Update Statistics'});
         }
         else{
-            res.send('No user found');
+            res.status(400);
+            res.send({'error':'No user found'});
             return;
         };  
     })
@@ -99,6 +109,7 @@ export function userEndpoints(app) {
         if (username){
             query = userProfileModel.where({'username': username});
             if(query.countDocuments() <= 0){
+                res.status(400);
                 res.send({"error": "User does not exist"});
                 return;
             }
@@ -110,12 +121,14 @@ export function userEndpoints(app) {
                 user = await query.findOne();
             }
             else{
+                res.status(400);
                 res.send({"error": "User does not exist"});
                 return;
             }
         }
         console.log("Wins: ", user.wins, "Losses: ", user.losses);
-        res.send('Get User Winrate by UserName');
+        res.status(200);
+        res.send({'message':'Get User Winrate by UserName'});
     });
 
     app.delete('/api/user/:id', async (req, res) => {
@@ -124,10 +137,12 @@ export function userEndpoints(app) {
         if (isID(id) && await userProfileModel.findById(id)){
             let query = {'_id': id};
             await userProfileModel.deleteOne(query);
-            res.send('Delete User');
+            res.status(200);
+            res.send({'error':'Delete User'});
         }
         else{
-            res.send('User does not exist');
+            res.status(400);
+            res.send({'error':'User does not exist'});
         }
         
     });
@@ -140,6 +155,7 @@ export function userEndpoints(app) {
         if (username){
             query = userProfileModel.where({'username': username});
             if(query.countDocuments() <= 0){
+                res.status(400);
                 res.send({"error": "User does not exist"});
                 return;
             }
@@ -151,12 +167,14 @@ export function userEndpoints(app) {
                 user = await userProfileModel.findById(id);
             }
             else{
+                res.status(400);
                 res.send({"error": "User does not exist"});
                 return;
             };
         }
         console.log(user);
-        res.send('Get all User Info by UserName');
+        res.status(200);
+        res.send({'message':'Get all User Info by UserName'});
     });
 }
 
