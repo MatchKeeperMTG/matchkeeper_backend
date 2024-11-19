@@ -9,14 +9,8 @@ import { isID } from '../index.js';
 export function userEndpoints(app) {
     app.post('/api/user', async (req, res) => {
         //Create user
-        let username = req.body.username;
-        let firstName = req.body.firstName;
-        let lastName = req.body.lastName;
-        let userEmail = req.body.userEmail;
-        let password = req.body.password;
-        
-        let queryUsername = userProfileModel.where({'username': username});
-        let queryEmail = userProfileModel.where({'userEmail': userEmail});
+        let queryUsername = userProfileModel.where({'username': req.body.username});
+        let queryEmail = userProfileModel.where({'userEmail': req.body.userEmail});
         let nameCount = await queryUsername.countDocuments();
         let emailCount = await queryEmail.countDocuments();
         if (nameCount > 0){
@@ -28,18 +22,19 @@ export function userEndpoints(app) {
             return;
         }
         else{
-            const testData = new userProfileModel({
-                username: username,
-                firstName: firstName,
-                lastName: lastName,
-                userEmail: userEmail,
-                password: password,
+            const newUser = new userProfileModel({
+                username: req.body.username,
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                userEmail: req.body.userEmail,
+                password: req.body.password,
                 wins: 0,
                 losses: 0
             });
     
             try {
-                await testData.save();
+                await newUser.save();
+                console.log(newUser._id);
                 await res.send('User created.');
             } catch {
                 console.log('Error saving test data');
@@ -50,16 +45,12 @@ export function userEndpoints(app) {
     });
 
     app.post('/api/user/:id', async (req, res) => {
-        //Modify User
+        //Modify User -- needs email validation
         let id = req.params.id;
-        if (isID(id) && await userProfileModel.findOne({"_id": req.params.id})){
-            let username = req.body.username;
-            let firstName = req.body.firstName;
-            let lastName = req.body.lastName;
+        if (isID(id) && await userProfileModel.findById(id)){
             let userEmail = req.body.userEmail;
-            let password = req.body.password;
 
-            let queryUsername = userProfileModel.where({'username': username});
+            let queryUsername = userProfileModel.where({'username': req.body.username});
             let queryEmail = userProfileModel.where({'userEmail': userEmail});
             let nameCount = await queryUsername.countDocuments();
             let emailCount = await queryEmail.countDocuments();
@@ -72,10 +63,10 @@ export function userEndpoints(app) {
                 return;
             }
             
-            let query = {'_id': id};
-            let newInfo = {'username': username, 'firstName': firstName, 'lastName': lastName, 
-                'userEmail': userEmail, 'password': password};
-            await userProfileModel.findOneAndUpdate(query, newInfo, {upsert: false});
+            await userProfileModel.findOneAndUpdate({ '_id': id }, {
+                    'username': req.body.username, 'firstName': req.body.firstName, 'lastName': req.body.lastName,
+                    'userEmail': userEmail, 'password': req.body.password
+                }, {upsert: false});
             res.send('Modify User');
         }
         else{
@@ -86,7 +77,7 @@ export function userEndpoints(app) {
     app.post('/api/user/:id/stats', async (req, res) => {
         //Update user statistics
         let id = req.params.id;
-        if (isID(id) && await userProfileModel.findOne({"_id": req.params.id})){
+        if (isID(id) && await userProfileModel.findById(id)){
             let wins = req.body.wins;
             let losses = req.body.losses;
             let query = userProfileModel.where({'_id': id});
@@ -114,7 +105,7 @@ export function userEndpoints(app) {
             user = await query.findOne();
         }
         else{
-            if(isID(id) && await userProfileModel.findOne({"_id": req.params.id})) {
+            if(isID(id) && await userProfileModel.findById(id)) {
                 query = userProfileModel.where({'_id': id});
                 user = await query.findOne();
             }
@@ -130,7 +121,7 @@ export function userEndpoints(app) {
     app.delete('/api/user/:id', async (req, res) => {
         //Delete user
         let id = req.params.id;
-        if (isID(id) && await userProfileModel.findOne({"_id": req.params.id})){
+        if (isID(id) && await userProfileModel.findById(id)){
             let query = {'_id': id};
             await userProfileModel.deleteOne(query);
             res.send('Delete User');
@@ -155,7 +146,7 @@ export function userEndpoints(app) {
             user = await query.findOne();
         }
         else{
-            if(isID(id) && await userProfileModel.findOne({"_id": req.params.id})){
+            if(isID(id) && await userProfileModel.findById(id)){
                 query = userProfileModel.where({'_id': id});
                 user = await userProfileModel.findById(id);
             }
