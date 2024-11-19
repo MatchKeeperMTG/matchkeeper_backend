@@ -29,7 +29,8 @@ export function bracketEndpoints(app) {
 
         try{
             await newBracket.save();
-            await res.send('New Bracket Created');
+            res.status(201);
+            await res.send({'message':'New Bracket Created'});
         }
         catch{
             res.status(400);
@@ -61,7 +62,8 @@ export function bracketEndpoints(app) {
             await bracketModel.findOneAndUpdate(query, newInfo, {upsert:false} );
 
 
-            res.send('Edit Bracket');
+            res.status(200);
+            res.send({'message':'Edit Bracket'});
             return;
 
             
@@ -137,7 +139,8 @@ export function bracketEndpoints(app) {
 
             //save the data and exit
             inputBracket.save();
-            res.send('Player added to bracket');
+            res.status(200);
+            res.send({'message':'Player added to bracket'});
             return;
 
         }
@@ -176,13 +179,15 @@ export function bracketEndpoints(app) {
                     inputBracket.playerNum -= 1;
                     //save the data and exit
                     inputBracket.save();
-                    res.send('Player removed from bracket');
+                    res.status(200);
+                    res.send({'message':'Player removed from bracket'});
                     return;
                 }
                 
             }
 
-            res.send('Player not in bracket');
+            res.status(400);
+            res.send({'error':'Player not in bracket'});
             return;
 
 
@@ -233,7 +238,8 @@ export function bracketEndpoints(app) {
                 counter++;
             }
 
-            res.send('results updated');
+            res.status(200);
+            res.send({'message':'results updated'});
             return;
         }
 

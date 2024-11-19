@@ -8,12 +8,13 @@ import { deckModel } from '../index.js';
  */
 export function deckEndpoints(app) {
     app.get('/api/card/url', async(req, res) => {
-        res.send('Get Card Image');
+        res.status(200);
+        res.send({'message':'Get Card Image'});
         
     });
 
     app.post('/api/deck', async(req, res) => {
-        res.send('Create Deck');
+        //Create Deck
         let deckName = req.body.deckName;
         let cards = req.body.cards;
         let user = req.body.user;
@@ -30,15 +31,17 @@ export function deckEndpoints(app) {
 
         try {
             await newDeck.save();
-            await res.send('Deck created.');
+            res.status(201);
+            await res.send({'message':'Deck created.'});
         } catch {
             console.log('Error creating new deck');
-            await res.send('An error occurred.');
+            res.status(400);
+            await res.send({'error':'An error occurred.'});
         }
     });
 
     app.post('/api/deck/:id/cards', async(req, res) => {
-        res.send('Add Card to Deck');
+        //Add card to Deck
         let deckId = req.params.id;
         let cardName = req.body.cardName;
         let cardImage = req.body.cardImage;
@@ -49,7 +52,8 @@ export function deckEndpoints(app) {
             const deck = await deckModel.findById(deckId);
     
             if (!deck) {
-                return res.send('Deck not found.');
+                res.status(400);
+                return res.send({'error':'Deck not found.'});
             }
 
             const newCard = { 
@@ -62,15 +66,17 @@ export function deckEndpoints(app) {
             deck.cards.push(newCard);
     
             await deck.save();
-            await res.send('Card added to deck.');
+            res.status(200);
+            await res.send({'message':'Card added to deck.'});
         } catch (e) {
             console.log('Error adding card to deck:', e);
-            await res.send('An error occurred.');
+            res.status(400)
+            await res.send({'error':'An error occurred.'});
         }
     });
 
     app.delete('/api/deck/:id/cards', async(req, res) => {
-        res.send('Remove Card from Deck');
+        //Remove Card from Deck
         let deckId = req.params.ObjectID;
         let cardName = req.body.cardName;  // remove by name or uri? discuss?
     
@@ -78,60 +84,72 @@ export function deckEndpoints(app) {
             const deck = await deckModel.findById(deckId);
     
             if (!deck) {
-                return res.send('Deck not found.');
+                res.status(400);
+                return res.send({'error':'Deck not found.'});
             }
     
             deck.cards = deck.cards.filter(card => card.cardName !== cardName);
     
             await deck.save();
-            await res.send('Card removed from deck.');
+            res.status(200);
+            await res.send({'message':'Card removed from deck.'});
         } catch (e) {
             console.log('Error removing card from deck:', e);
-            await res.send('An error occurred.');
+            res.status(400);
+            await res.send({'error':'An error occurred.'});
         }
     });
 
     app.get('/api/deck/:id', async(req, res) => {
-        res.send('View Deck');
+        //View Deck
         let deckId = req.params.ObjectID;
 
         try {
             const deck = await deckModel.findById(deckId);
     
             if (!deck) {
-                return res.send('Deck not found.');
+                res.status(400);
+                return res.send({'error':'Deck not found.'});
             }
     
-            await res.send({ deck }); 
+            res.status(200);
+            await res.send({'message':'returning Deck',
+                'data': deck }); 
         } catch (e) {
             console.log('Error fetching deck:', e);
-            await res.send('An error occurred.');
+            res.status(400);
+            await res.send({'error':'An error occurred.'});
         }
     });
 
     app.get('/api/deck/:id/winRate', async(req, res) => {
-        res.send('View Deck Winrate');
+        //View Deck Win Rate
         let deckId = req.params.ObjectID;
 
     try {
         const deck = await deckModel.findById(deckId);
 
         if (!deck) {
-            return res.send('Deck not found.');
+            res.status(400);
+            return res.send({'error':'Deck not found.'});
         }
         const totalGames = deck.deckWins + deck.deckLosses;
         const winRate = totalGames > 0 ? (deck.deckWins / totalGames) * 100 : 0;
 
-        await res.send(`Deck win rate: ${winRate.toFixed(2)}%`);
+        res.status(200);
+        await res.send({'message':'Deck WinRateFound',
+            'data':`Deck win rate: ${winRate.toFixed(2)}%`});
     } catch (e) {
         console.log('Error calculating win rate:', e);
-        await res.send('An error occurred.');
+        res.status(400);
+        await res.send({'error':'An error occurred.'});
     }
     });
 
     app.get('/api/card/legality', async(req, res) => { 
         // how are we doing legality? In relation to events? That would be more deck legality vs card legality
         // discuss better legality handling for events, decks, and cards
+        res.status(200);
         res.send('Check Card Legality');
         
     });
