@@ -1,5 +1,7 @@
 import express from 'express';
 import * as mongoose from 'mongoose';
+import * as bcrypt from 'bcrypt';
+import jwt from 'node-jsonwebtoken';
 import { userProfileModel } from "../index.js";
 import { isID } from '../index.js';
 
@@ -20,33 +22,59 @@ export function userEndpoints(app) {
         let nameCount = await queryUsername.countDocuments();
         let emailCount = await queryEmail.countDocuments();
         if (nameCount > 0){
-            res.send("Username already exists");
+            res.status(400);
+            res.send({"error": "Username already exists"});
             return;
-        }
-        else if (emailCount > 0){
-            res.send("Email already in use");
+        } else if (emailCount > 0) {
+            res.status(400);
+            await res.send({"error": "Email already in use"});
             return;
-        }
-        else{
-            const testData = new userProfileModel({
+        } else {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const userData = new userProfileModel({
                 username: username,
                 firstName: firstName,
                 lastName: lastName,
                 userEmail: userEmail,
-                password: password,
+                password: hashedPassword,
                 wins: 0,
                 losses: 0
             });
     
             try {
-                await testData.save();
-                await res.send('User created.');
-            } catch {
-                console.log('Error saving test data');
-                await res.send('An error occurred.');
+                await userData.save();
+                const token = await jwt.sign({user: userData._id}, process.env.TOKEN_SECRET, {
+                    expiresIn: "48h"
+                });
+                await res.send({"token": token});
+            } catch(e) {
+                console.log(`Error:\n${e}`);
+                res.status(500);
+                await res.send({"error": "Database error."});
             }
         }
+    });
 
+    app.post('/api/user/login', async (req, res) => {
+        let username = req.body.username;
+        let password = req.body.password;
+
+        let foundUser = await userProfileModel.findOne({'username': username});
+        if(foundUser) {
+            const passwordCorrect = await bcrypt.compare(password, foundUser.password);
+            if(passwordCorrect) {
+                const token = await jwt.sign({user: foundUser._id}, process.env.TOKEN_SECRET, {
+                    expiresIn: "48h"
+                });
+                await res.send({"token": token});
+            } else {
+                res.status(401);
+                res.send({"error": "Incorrect password"});
+            }
+        } else {
+            res.status(400);
+            res.send({"error": "No such user"});
+        }
     });
 
     app.post('/api/user/:id', async (req, res) => {

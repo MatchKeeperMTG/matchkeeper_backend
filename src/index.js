@@ -10,11 +10,10 @@ import { deckEndpoints } from './endpoints/deck.js';
 if (process.env.MONGO_URL === undefined) {
   throw new Error('MONGO_URL is not defined, make sure .env exists and contains a valid MongoDB URL for the MONGO_URL key.');
 }
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGO_URL);
 
 //this makes the schema for the user
 const userProfileSchema = new mongoose.Schema({
-
     username: String,
     firstName: String,
     lastName: String,
