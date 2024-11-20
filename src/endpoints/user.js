@@ -59,6 +59,20 @@ async function authMiddleware(req, res, next) {
  * @param {express.Express} app 
  */
 export function userEndpoints(app) {
+    /**
+     * Registers a new user.
+     * Input schema:
+     * {
+     *  "username": string,
+     *  "firstName": string,
+     *  "lastName": string,
+     *  "userEmail": string,
+     *  "password": string,
+     * }
+     * 
+     * Returns:
+     * {"token": string}
+     */
     app.post('/api/user', async (req, res) => {
         // Params
         const username = req.body.username;
@@ -112,6 +126,17 @@ export function userEndpoints(app) {
         }
     });
 
+    /**
+     * Authenticates a user account.
+     * Input schema:
+     * {
+     *  "username": string,
+     *  "password": string
+     * }
+     * 
+     * Returns:
+     * {"token": string}
+     */
     app.post('/api/user/login', async (req, res) => {
         let username = req.body.username;
         let password = req.body.password;
@@ -129,11 +154,26 @@ export function userEndpoints(app) {
                 res.send({"error": "Incorrect password"});
             }
         } else {
-            res.status(400);
+            res.status(404);
             res.send({"error": "No such user"});
         }
     });
 
+    /**
+     * Modifies the information of the user you are authenticated as.
+     * All inputs are optional - DB fields will only be updated if the relevant field is included.
+     * Input schema:
+     * {
+     *  "username": string?,
+     *  "firstName": string?,
+     *  "lastName": string?,
+     *  "userEmail": string?,
+     *  "password": string?,
+     * }
+     * 
+     * Returns:
+     * {"token": string}
+     */
     app.put('/api/user', authMiddleware, async (req, res) => {
         let id = req.user;
         if (isID(id) && await userProfileModel.findById(id)){
@@ -171,6 +211,9 @@ export function userEndpoints(app) {
         }
     });
 
+    /**
+     * Deletes the user you are currently authenticated as.
+     */
     app.delete('/api/user/', authMiddleware, async (req, res) => {
         //Delete user
         let id = req.user;
@@ -186,6 +229,19 @@ export function userEndpoints(app) {
         }  
     });
 
+    /**
+     * Gets information on the user you are currently authenticated as.
+     * Returns:
+     * {
+     *  "id": string,
+     *  "username": string,
+     *  "userEmail": string,
+     *  "firstName": string,
+     *  "lastName": string,
+     *  "wins": number,
+     *  "losses": number
+     * }
+     */
     app.get('/api/user', authMiddleware, async (req, res) => {
         let id = req.user;
 
@@ -194,18 +250,36 @@ export function userEndpoints(app) {
         res.send({
             "id": user._id,
             "username": user.username,
-            "email": user.email,
+            "userEmail": user.userEmail,
+            "firstName": user.firstName,
+            "lastName": user.lastName,
             "wins": user.wins,
             "losses": user.losses
         });
     });
 
+    /**
+     * Gets limited information on a user by their ID or username.
+     * If the username is specified, the passed user ID is ignored.
+     * The ID is still mandatory, regardless.
+     * Input schema:
+     * {
+     *  "username": string?
+     * }
+     * 
+     * Returns:
+     * {
+     *  "id": string,
+     *  "username": string,
+     *  "wins": number,
+     *  "losses": number
+     * }
+     */
     app.get('/api/user/:id', async (req, res) => {
-        //Get all info by username
         let id = req.params.id;
         let username = req.body.username;
         let query, user;
-        if (username){
+        if (username) {
             query = userProfileModel.where({'username': username});
             if(query.countDocuments() <= 0){
                 res.status(400);
@@ -229,7 +303,6 @@ export function userEndpoints(app) {
         res.send({
             "id": user._id,
             "username": user.username,
-            "email": user.email,
             "wins": user.wins,
             "losses": user.losses
         });
