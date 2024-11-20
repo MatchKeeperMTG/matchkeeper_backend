@@ -11,7 +11,7 @@ import { isID } from '../index.js';
  * @param {express.Response} res 
  * @param {express.NextFunction} next 
  */
-function authMiddleware(req, res, next) {
+async function authMiddleware(req, res, next) {
     const auth = req.headers.authorization;
 
     if (!auth) {
@@ -39,6 +39,14 @@ function authMiddleware(req, res, next) {
             return;
         }
 
+        const foundUser = await userProfileModel.findById(req.user);
+
+        if(!foundUser) {
+            res.status(401);
+            res.send({"error": "Tried to authenticate as nonexistent user"});
+            return;
+        }
+
         next();
     } catch(err) {
         res.status(401);
@@ -52,9 +60,22 @@ function authMiddleware(req, res, next) {
  */
 export function userEndpoints(app) {
     app.post('/api/user', async (req, res) => {
-        //Create user
-        let queryUsername = userProfileModel.where({'username': req.body.username});
-        let queryEmail = userProfileModel.where({'userEmail': req.body.userEmail});
+        // Params
+        const username = req.body.username;
+        const firstName = req.body.firstName;
+        const lastName = req.body.lastName;
+        const userEmail = req.body.userEmail;
+        const password = req.body.password;
+
+        if(!username || !firstName || !lastName || !userEmail || !password) {
+            res.status(400);
+            res.send({"error": "Incomplete request"});
+            return;
+        }
+
+        // Create user
+        let queryUsername = userProfileModel.where({'username': username});
+        let queryEmail = userProfileModel.where({'userEmail': userEmail});
         let nameCount = await queryUsername.countDocuments();
         let emailCount = await queryEmail.countDocuments();
         if (nameCount > 0){
@@ -66,7 +87,7 @@ export function userEndpoints(app) {
             await res.send({"error": "Email already in use"});
             return;
         } else {
-            const hashedPassword = await bcrypt.hash(password, 10);
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
             const userData = new userProfileModel({
                 username: username,
                 firstName: firstName,
@@ -113,9 +134,8 @@ export function userEndpoints(app) {
         }
     });
 
-    app.post('/api/user/:id', async (req, res) => {
-        //Modify User -- needs email validation
-        let id = req.params.id;
+    app.put('/api/user', authMiddleware, async (req, res) => {
+        let id = req.user;
         if (isID(id) && await userProfileModel.findById(id)){
             let userEmail = req.body.userEmail;
 
@@ -123,92 +143,61 @@ export function userEndpoints(app) {
             let queryEmail = userProfileModel.where({'userEmail': userEmail});
             let nameCount = await queryUsername.countDocuments();
             let emailCount = await queryEmail.countDocuments();
-            if (nameCount > 0){
+            if (nameCount > 0) {
                 res.status(400);
                 res.send({"error":"Username already exists"});
                 return;
-            }
-            else if (emailCount > 0){
+            } else if (emailCount > 0) {
                 res.status(400);
                 res.send({"message":"Email already in use"});
                 return;
             }
+
+            let hashedPassword = undefined;
+            if (req.body.password) {
+                hashedPassword = await bcrypt.hash(req.body.password, 10);
+            }
             
             await userProfileModel.findOneAndUpdate({ '_id': id }, {
                     'username': req.body.username, 'firstName': req.body.firstName, 'lastName': req.body.lastName,
-                    'userEmail': userEmail, 'password': req.body.password
+                    'userEmail': userEmail, 'password': hashedPassword
                 }, {upsert: false});
             res.status(200);
-            res.send({'message':'Modify User'});
+            res.send({});
         }
         else{
-            res.status(400);
-            res.send({'error':'User not found}'});
+            res.status(404);
+            res.send({'error':'User not found'});
         }
     });
 
-    app.post('/api/user/:id/stats', async (req, res) => {
-        //Update user statistics
-        let id = req.params.id;
-        if (isID(id) && await userProfileModel.findById(id)){
-            let wins = req.body.wins;
-            let losses = req.body.losses;
-            let query = userProfileModel.where({'_id': id});
-            let newInfo = {'wins': wins, 'losses': losses};
-            await userProfileModel.findByIdAndUpdate(id, newInfo, {upsert:false});
-            res.status(200);
-            res.send({'error':'Update Statistics'});
-        }
-        else{
-            res.status(400);
-            res.send({'error':'No user found'});
-            return;
-        };  
-    });
-
-    app.get('/api/user/:id/stats', async(req, res) => {
-        //Get user winrate (by username or ID)
-        let id = req.params.id;
-        let username = req.body.username;
-        let query, user;
-        if (username){
-            query = userProfileModel.where({'username': username});
-            if(query.countDocuments() <= 0){
-                res.status(400);
-                res.send({"error": "User does not exist"});
-                return;
-            }
-            user = await query.findOne();
-        }
-        else{
-            if(isID(id) && await userProfileModel.findById(id)) {
-                query = userProfileModel.where({'_id': id});
-                user = await query.findOne();
-            }
-            else{
-                res.status(400);
-                res.send({"error": "User does not exist"});
-                return;
-            }
-        }
-        console.log("Wins: ", user.wins, "Losses: ", user.losses);
-        res.status(200);
-        res.send({'message':'Get User Winrate by UserName'});
-    });
-
-    app.delete('/api/user/:id', async (req, res) => {
+    app.delete('/api/user/', authMiddleware, async (req, res) => {
         //Delete user
-        let id = req.params.id;
+        let id = req.user;
         if (isID(id) && await userProfileModel.findById(id)){
             let query = {'_id': id};
             await userProfileModel.deleteOne(query);
             res.status(200);
-            res.send({'error':'Delete User'});
+            res.send({});
         }
         else{
             res.status(400);
             res.send({'error':'User does not exist'});
         }  
+    });
+
+    app.get('/api/user', authMiddleware, async (req, res) => {
+        let id = req.user;
+
+        const user = await userProfileModel.findById(id);
+        res.status(200);
+        res.send({
+            "id": user._id,
+            "username": user.username,
+            "email": user.email,
+            "wins": user.wins,
+            "losses": user.losses
+        });
     });
 
     app.get('/api/user/:id', async (req, res) => {
@@ -236,9 +225,15 @@ export function userEndpoints(app) {
                 return;
             };
         }
-        console.log(user);
+
         res.status(200);
-        res.send({'message':'Get all User Info by UserName'});
+        res.send({
+            "id": user._id,
+            "username": user.username,
+            "email": user.email,
+            "wins": user.wins,
+            "losses": user.losses
+        });
     });
 }
 
