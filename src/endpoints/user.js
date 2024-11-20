@@ -213,9 +213,8 @@ export function userEndpoints(app) {
                 return;
             }
             user = await query.findOne();
-        }
-        else{
-            if(isID(id) && await userProfileModel.findById(id)){
+        } else {
+            if(isID(id) && await userProfileModel.findById(id)) {
                 query = userProfileModel.where({'_id': id});
                 user = await userProfileModel.findById(id);
             }
