@@ -6,6 +6,48 @@ import { userProfileModel } from "../index.js";
 import { isID } from '../index.js';
 
 /**
+ * 
+ * @param {express.Request} req 
+ * @param {express.Response} res 
+ * @param {express.NextFunction} next 
+ */
+function authMiddleware(req, res, next) {
+    const auth = req.headers.authorization;
+
+    if (!auth) {
+        res.status(401);
+        res.send({"error": "Authorization header missing."});
+        return;
+    }
+
+    if (!auth.startsWith('Bearer ')) {
+        res.status(401);
+        res.send({"error": "Malformed authorization header"});
+        return;
+    }
+
+    const token = auth.split(' ')[1];
+
+    try {
+        const data = jwt.verify(token, process.env.TOKEN_SECRET);
+
+        req.user = data["user"];
+
+        if(!req.user) {
+            res.status(401);
+            res.send({"error": "Malformed JWT"});
+            return;
+        }
+
+        next();
+    } catch(err) {
+        res.status(401);
+        res.send({"error": "Error parsing JWT"});
+        return;
+    }
+}
+
+/**
  * @param {express.Express} app 
  */
 export function userEndpoints(app) {
@@ -122,7 +164,7 @@ export function userEndpoints(app) {
             res.send({'error':'No user found'});
             return;
         };  
-    })
+    });
 
     app.get('/api/user/:id/stats', async(req, res) => {
         //Get user winrate (by username or ID)
@@ -166,8 +208,7 @@ export function userEndpoints(app) {
         else{
             res.status(400);
             res.send({'error':'User does not exist'});
-        }
-        
+        }  
     });
 
     app.get('/api/user/:id', async (req, res) => {
