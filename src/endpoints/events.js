@@ -24,7 +24,9 @@ export function eventEndpoints(app) {
             });
         }
 
-        res.send(resultsModified);
+        res.status(200);
+        res.send({'message': 'returning all events',
+            'data':resultsModified});
     });
 
     /**
@@ -42,12 +44,19 @@ export function eventEndpoints(app) {
      * }
      */
     app.post('/api/event/', async (req, res) => {
-        //Create event
-        const body = req.body;
+        //Create event -- Add check if eventName exists
+        const body = req.body;      
 
         if(body.eventName === undefined) {
             res.status(400);
-            await res.send({"error": "'name' field not specified."});
+            res.send({"error": "'name' field not specified."});
+            return;
+        }
+
+        let queryName = eventModel.where({"eventName": body.eventName});
+        if (await queryName.countDocuments() > 0){
+            res.status(400);
+            res.send({"error": "Event name already exists"});
             return;
         }
 
@@ -80,7 +89,9 @@ export function eventEndpoints(app) {
         });
         await newEvent.save();
         console.log(newEvent._id);
-        res.send({"id": newEvent._id});
+        res.status(200);
+        res.send({'message': 'returning Event ID',
+            'data':{"id": newEvent._id}});
     });
 
     /**
@@ -94,11 +105,19 @@ export function eventEndpoints(app) {
      * }
      */
     app.put('/api/event/:id', async (req, res) => {
-        //Modify Event
+        //Modify Event -- Add check for if eventName exists
         const body = req.body;
         let id = req.params.id;
 
-        if(isID(id) && await eventModel.findOne({"_id": id})) {
+        if(isID(id) && await eventModel.findById(id)) {
+
+            let queryName = eventModel.where({"eventName": body.eventName});
+            if (await queryName.countDocuments() > 0){
+                res.status(400);
+                res.send({"error": "Event name already exists"});
+                return;
+            }
+
             await eventModel.findOneAndUpdate({
                 "_id": id
             }, {
@@ -107,9 +126,11 @@ export function eventEndpoints(app) {
                 "maxPlayers": body.maxPlayers,
                 "dateTime": body.dateTime
             });
-            res.send("Event updated");            
+            res.status(200);
+            res.send({"message":"Event updated"});            
         }
         else{
+            res.status(400);
             res.send({"error": "No such event."});
             return;
         }        
@@ -120,9 +141,11 @@ export function eventEndpoints(app) {
         let id = req.params.id;
         if(isID(id) && await eventModel.findOne({"_id": id})) {
             await eventModel.deleteOne({"_id": id});
-            res.send({});
+            res.status(200);
+            res.send({"message":"event deleted"});
         }
         else{
+            res.status(400);
             res.send({"error": "No such event."});
             return;
         }
@@ -133,9 +156,12 @@ export function eventEndpoints(app) {
         let id = req.params.id;
         if(isID(id) && await eventModel.findOne({"_id": id})){
             let result = await eventModel.findOne({"_id": id});
-            res.send(result);
+            res.status(200);
+            res.send({'message':'returning result',
+                'data':result});
         }
         else{
+            res.status(400);
             res.send({"error": "No such event."});
             return;
         }
@@ -143,7 +169,36 @@ export function eventEndpoints(app) {
 
     app.get('/api/event/:id/players', async (req, res) => {
         //Get players in event
-        res.send('Get Players');
+        let id = req.params.id;
+        if(isID(id) && await eventModel.findById(id)){
+            let event = await eventModel.findById(id);
+            let eventPlayers = event.attendees;
+            let ret = [];
+            for (const playerId of eventPlayers){
+                const query = await userProfileModel.findById(playerId);
+                if (query){
+                    ret.push(query.username);
+                }
+                else{
+                    //let string = "Player " +  playerId + " not found";
+                    ret.push({"error": "Player " + playerId + "not found!"});
+                    console.log("Player ", playerId, " not found!");
+                    let removeEvent = await eventModel.findOneAndUpdate(
+                        {_id: id},
+                        {$pull: {attendees: {playerId}}},
+                        {safe: true, multi: false}
+                    );
+                    removeEvent.save();
+                }
+            }
+            res.status(200);
+            res.send({'message':'returning players in event',
+                'data':ret});
+        }
+        else{
+            res.status(400);
+            res.send({"error": "event does not exist"});
+        }
     });
 
     app.post('/api/event/:id/players', async (req, res) => {
@@ -172,17 +227,46 @@ export function eventEndpoints(app) {
                 }
             }
             event.save();
-            res.send("Added players to events");
+            res.status(200);
+            res.send({"message":"Added players to events"});
         }
         else{
-            res.send("Event does not exist");
+            res.status(400);
+            res.send({"error": "Event does not exist"});
             return;
         }
     });
 
     app.delete('/api/event/:id/players', async (req, res) => {
         //Remove player from event
-        res.send('Remove Players');
+        let id = req.params.id;
+        if(isID(id) && await eventModel.findOne({"_id": id})){
+            let event = eventModel.findOne({"_id": id});
+            let players = event.attendees;
+            
+            const query = userProfileModel.where({"username": req.body.username});
+            const playerQuery = await query.findOne();
+            if(playerQuery){
+                let playerId = playerQuery._id;
+                let index = players.indexOf(playerId);
+                if (index > -1){
+                    players.splice(index, 1);
+                    event.attendees = players;
+                    event.save();
+                }
+                res.status(200);
+                res.send({'message':'removed player from attendees',
+                    'data':event.attendees});
+            }else{
+                res.status(400);
+                res.send({"error":"Player not in event"});
+            }
+        }
+        else{
+            res.status(400);
+            res.send({"error": "event does not exist"});
+        }
+
     });
 
     // app.post('/api/event/:id/decks', (req, res) => {

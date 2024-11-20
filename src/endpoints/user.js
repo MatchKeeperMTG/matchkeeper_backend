@@ -11,14 +11,8 @@ import { isID } from '../index.js';
 export function userEndpoints(app) {
     app.post('/api/user', async (req, res) => {
         //Create user
-        let username = req.body.username;
-        let firstName = req.body.firstName;
-        let lastName = req.body.lastName;
-        let userEmail = req.body.userEmail;
-        let password = req.body.password;
-        
-        let queryUsername = userProfileModel.where({'username': username});
-        let queryEmail = userProfileModel.where({'userEmail': userEmail});
+        let queryUsername = userProfileModel.where({'username': req.body.username});
+        let queryEmail = userProfileModel.where({'userEmail': req.body.userEmail});
         let nameCount = await queryUsername.countDocuments();
         let emailCount = await queryEmail.countDocuments();
         if (nameCount > 0){
@@ -78,52 +72,54 @@ export function userEndpoints(app) {
     });
 
     app.post('/api/user/:id', async (req, res) => {
-        //Modify User
+        //Modify User -- needs email validation
         let id = req.params.id;
-        if (isID(id) && await userProfileModel.findOne({"_id": req.params.id})){
-            let username = req.body.username;
-            let firstName = req.body.firstName;
-            let lastName = req.body.lastName;
+        if (isID(id) && await userProfileModel.findById(id)){
             let userEmail = req.body.userEmail;
-            let password = req.body.password;
 
-            let queryUsername = userProfileModel.where({'username': username});
+            let queryUsername = userProfileModel.where({'username': req.body.username});
             let queryEmail = userProfileModel.where({'userEmail': userEmail});
             let nameCount = await queryUsername.countDocuments();
             let emailCount = await queryEmail.countDocuments();
             if (nameCount > 0){
-                res.send("Username already exists");
+                res.status(400);
+                res.send({"error":"Username already exists"});
                 return;
             }
             else if (emailCount > 0){
-                res.send("Email already in use");
+                res.status(400);
+                res.send({"message":"Email already in use"});
                 return;
             }
             
-            let query = {'_id': id};
-            let newInfo = {'username': username, 'firstName': firstName, 'lastName': lastName, 
-                'userEmail': userEmail, 'password': password};
-            await userProfileModel.findOneAndUpdate(query, newInfo, {upsert: false});
-            res.send('Modify User');
+            await userProfileModel.findOneAndUpdate({ '_id': id }, {
+                    'username': req.body.username, 'firstName': req.body.firstName, 'lastName': req.body.lastName,
+                    'userEmail': userEmail, 'password': req.body.password
+                }, {upsert: false});
+            res.status(200);
+            res.send({'message':'Modify User'});
         }
         else{
-            res.send('User not found');
+            res.status(400);
+            res.send({'error':'User not found}'});
         }
     });
 
     app.post('/api/user/:id/stats', async (req, res) => {
         //Update user statistics
         let id = req.params.id;
-        if (isID(id) && await userProfileModel.findOne({"_id": req.params.id})){
+        if (isID(id) && await userProfileModel.findById(id)){
             let wins = req.body.wins;
             let losses = req.body.losses;
             let query = userProfileModel.where({'_id': id});
             let newInfo = {'wins': wins, 'losses': losses};
             await userProfileModel.findByIdAndUpdate(id, newInfo, {upsert:false});
-            res.send('Update Statistics');
+            res.status(200);
+            res.send({'error':'Update Statistics'});
         }
         else{
-            res.send('No user found');
+            res.status(400);
+            res.send({'error':'No user found'});
             return;
         };  
     })
@@ -136,35 +132,40 @@ export function userEndpoints(app) {
         if (username){
             query = userProfileModel.where({'username': username});
             if(query.countDocuments() <= 0){
+                res.status(400);
                 res.send({"error": "User does not exist"});
                 return;
             }
             user = await query.findOne();
         }
         else{
-            if(isID(id) && await userProfileModel.findOne({"_id": req.params.id})) {
+            if(isID(id) && await userProfileModel.findById(id)) {
                 query = userProfileModel.where({'_id': id});
                 user = await query.findOne();
             }
             else{
+                res.status(400);
                 res.send({"error": "User does not exist"});
                 return;
             }
         }
         console.log("Wins: ", user.wins, "Losses: ", user.losses);
-        res.send('Get User Winrate by UserName');
+        res.status(200);
+        res.send({'message':'Get User Winrate by UserName'});
     });
 
     app.delete('/api/user/:id', async (req, res) => {
         //Delete user
         let id = req.params.id;
-        if (isID(id) && await userProfileModel.findOne({"_id": req.params.id})){
+        if (isID(id) && await userProfileModel.findById(id)){
             let query = {'_id': id};
             await userProfileModel.deleteOne(query);
-            res.send('Delete User');
+            res.status(200);
+            res.send({'error':'Delete User'});
         }
         else{
-            res.send('User does not exist');
+            res.status(400);
+            res.send({'error':'User does not exist'});
         }
         
     });
@@ -177,23 +178,26 @@ export function userEndpoints(app) {
         if (username){
             query = userProfileModel.where({'username': username});
             if(query.countDocuments() <= 0){
+                res.status(400);
                 res.send({"error": "User does not exist"});
                 return;
             }
             user = await query.findOne();
         }
         else{
-            if(isID(id) && await userProfileModel.findOne({"_id": req.params.id})){
+            if(isID(id) && await userProfileModel.findById(id)){
                 query = userProfileModel.where({'_id': id});
                 user = await userProfileModel.findById(id);
             }
             else{
+                res.status(400);
                 res.send({"error": "User does not exist"});
                 return;
             };
         }
         console.log(user);
-        res.send('Get all User Info by UserName');
+        res.status(200);
+        res.send({'message':'Get all User Info by UserName'});
     });
 }
 
