@@ -291,8 +291,7 @@ export function userEndpoints(app) {
             if(isID(id) && await userProfileModel.findById(id)) {
                 query = userProfileModel.where({'_id': id});
                 user = await userProfileModel.findById(id);
-            }
-            else{
+            } else {
                 res.status(400);
                 res.send({"error": "User does not exist"});
                 return;
