@@ -11,7 +11,7 @@ import { isID } from '../index.js';
  * @param {express.Response} res 
  * @param {express.NextFunction} next 
  */
-async function authMiddleware(req, res, next) {
+export async function authMiddleware(req, res, next) {
     const auth = req.headers.authorization;
 
     if (!auth) {
