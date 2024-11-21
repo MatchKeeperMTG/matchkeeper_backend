@@ -2,13 +2,14 @@ import express from 'express';
 import {eventModel, userProfileModel} from "../index.js";
 import { isID } from "../index.js";
 import * as mongoose from 'mongoose';
+import { authMiddleware } from './user.js';
 
 /**
  * @param {express.Express} app 
  */
 export function eventEndpoints(app) {
 
-    app.get('/api/event', async (req, res) => {
+    app.get('/api/event', authMiddleware, async (req, res) => {
         //Get all events
         const results = await eventModel.find();
 
@@ -43,8 +44,8 @@ export function eventEndpoints(app) {
      *  "id": string, // The unique ID of the created event
      * }
      */
-    app.post('/api/event/', async (req, res) => {
-        //Create event -- Add check if eventName exists
+    app.post('/api/event/', authMiddleware, async (req, res) => {
+        //Create event
         const body = req.body;      
 
         if(body.eventName === undefined) {
@@ -84,7 +85,7 @@ export function eventEndpoints(app) {
             "playerNum": 0,
             "maxPlayers": body.maxPlayers,
             "dateTime": body.dateTime,
-            "ownerID": 999999,
+            "owner": req.user,
             "brackets": []
         });
         await newEvent.save();
@@ -104,12 +105,18 @@ export function eventEndpoints(app) {
      *  "dateTime": number // Optional, date-time for the event
      * }
      */
-    app.put('/api/event/:id', async (req, res) => {
+    app.put('/api/event/:id', authMiddleware, async (req, res) => {
         //Modify Event -- Add check for if eventName exists
         const body = req.body;
         let id = req.params.id;
 
         if(isID(id) && await eventModel.findById(id)) {
+            let event = await eventModel.findById(id);
+            if (!event.owner.equals(req.user)){
+                res.status(401);
+                res.send({"error": "Not authorized to edit event"});
+                return;
+            }
 
             let queryName = eventModel.where({"eventName": body.eventName});
             if (await queryName.countDocuments() > 0){
@@ -136,10 +143,16 @@ export function eventEndpoints(app) {
         }        
     });
 
-    app.delete('/api/event/:id', async (req, res) => {
+    app.delete('/api/event/:id', authMiddleware, async (req, res) => {
         //Delete an event
         let id = req.params.id;
         if(isID(id) && await eventModel.findOne({"_id": id})) {
+            let event = await eventModel.findById(id);
+            if (!event.owner.equals(req.user)){
+                res.status(401);
+                res.send({"error": "Not authorized to edit event"});
+                return;
+            }
             await eventModel.deleteOne({"_id": id});
             res.status(200);
             res.send({"message":"event deleted"});
@@ -151,7 +164,7 @@ export function eventEndpoints(app) {
         }
     });
 
-    app.get('/api/event/:id', async (req, res) => {
+    app.get('/api/event/:id', authMiddleware, async (req, res) => {
         //Get event details
         let id = req.params.id;
         if(isID(id) && await eventModel.findOne({"_id": id})){
@@ -167,29 +180,33 @@ export function eventEndpoints(app) {
         }
     });
 
-    app.get('/api/event/:id/players', async (req, res) => {
+    app.get('/api/event/:id/players', authMiddleware, async (req, res) => {
         //Get players in event
         let id = req.params.id;
         if(isID(id) && await eventModel.findById(id)){
             let event = await eventModel.findById(id);
             let eventPlayers = event.attendees;
             let ret = [];
+            let playerList = [];
+            let flag = false;
             for (const playerId of eventPlayers){
                 const query = await userProfileModel.findById(playerId);
                 if (query){
                     ret.push(query.username);
+                    playerList.push(query.username);
                 }
                 else{
-                    //let string = "Player " +  playerId + " not found";
                     ret.push({"error": "Player " + playerId + "not found!"});
-                    console.log("Player ", playerId, " not found!");
-                    let removeEvent = await eventModel.findOneAndUpdate(
-                        {_id: id},
-                        {$pull: {attendees: {playerId}}},
-                        {safe: true, multi: false}
-                    );
-                    removeEvent.save();
+                    flag = true;
                 }
+            }
+            if(flag){
+                let removeEvent = await eventModel.findOneAndUpdate(
+                    {_id: id},
+                    {attendees: playerList},
+                    {safe: true, multi: false}
+                );
+                removeEvent.save();
             }
             res.status(200);
             res.send({'message':'returning players in event',
@@ -201,13 +218,20 @@ export function eventEndpoints(app) {
         }
     });
 
-    app.post('/api/event/:id/players', async (req, res) => {
+    app.post('/api/event/:id/players', authMiddleware, async (req, res) => {
         //Add player(s) to event
         let id = req.params.id;
+        let count = 0;
         //If event exists:
         if(isID(id) && await eventModel.findOne({"_id": id})){
             let event = await eventModel.findOne({"_id": id});
+            if (!event.owner.equals(req.user)){
+                res.status(401);
+                res.send({"error": "Not authorized to edit event"});
+                return;
+            }
             let eventPlayers = event.attendees;
+            count = event.playerNum;
             //Loops through each player inputted:
             for (const player of req.body.players){
                 const query = userProfileModel.where({"username": player});
@@ -217,8 +241,15 @@ export function eventEndpoints(app) {
                     if (eventPlayers.includes(playerQuery._id)){
                         console.log("Player ", player, " already in event");
                     }
+                    else if (count == event.maxPlayers){
+                        console.log("Event full!");
+                        res.status(400);
+                        res.send({"error": "Too many players!"});
+                        return;
+                    }
                     else{
                         event.attendees.push(playerQuery._id);
+                        count++;
                         console.log("Player ", player, " added to event!");
                     }
                 }
@@ -226,6 +257,7 @@ export function eventEndpoints(app) {
                     console.log("Player ", player, " not found!");
                 }
             }
+            event.playerNum = count;
             event.save();
             res.status(200);
             res.send({"message":"Added players to events"});
@@ -241,32 +273,40 @@ export function eventEndpoints(app) {
         //Remove player from event
         let id = req.params.id;
         if(isID(id) && await eventModel.findOne({"_id": id})){
-            let event = eventModel.findOne({"_id": id});
-            let players = event.attendees;
-            
+            let event = await eventModel.findOne({"_id": id});
+            if (!event.owner.equals(req.user)){
+                res.status(401);
+                res.send({"error": "Not authorized to edit event"});
+                return;
+            }
+            const newPlayerList = [];
             const query = userProfileModel.where({"username": req.body.username});
             const playerQuery = await query.findOne();
             if(playerQuery){
                 let playerId = playerQuery._id;
-                let index = players.indexOf(playerId);
-                if (index > -1){
-                    players.splice(index, 1);
-                    event.attendees = players;
-                    event.save();
+                for(const player of event.attendees){
+                    if (!player.equals(playerId)){
+                        newPlayerList.push(player);
+                    }
                 }
+                event.attendees = newPlayerList;
+                event.playerNum = newPlayerList.length;
+                event.save();
                 res.status(200);
                 res.send({'message':'removed player from attendees',
-                    'data':event.attendees});
+                        'data':event.attendees});
+                return;
             }else{
                 res.status(400);
                 res.send({"error":"Player not in event"});
+                return;
             }
         }
         else{
             res.status(400);
             res.send({"error": "event does not exist"});
+            return;
         }
-
     });
 
     // app.post('/api/event/:id/decks', (req, res) => {
