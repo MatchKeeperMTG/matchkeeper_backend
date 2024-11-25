@@ -218,8 +218,7 @@ export function userEndpoints(app) {
         //Delete user
         let id = req.user;
         if (isID(id) && await userProfileModel.findById(id)){
-            let query = {'_id': id};
-            await userProfileModel.deleteOne(query);
+            await userProfileModel.findByIdAndDelete(id);
             res.status(200);
             res.send({});
         }

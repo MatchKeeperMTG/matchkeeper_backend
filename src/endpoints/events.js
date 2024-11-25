@@ -106,7 +106,7 @@ export function eventEndpoints(app) {
      * }
      */
     app.put('/api/event/:id', authMiddleware, async (req, res) => {
-        //Modify Event -- Add check for if eventName exists
+        //Modify Event
         const body = req.body;
         let id = req.params.id;
 
@@ -269,12 +269,13 @@ export function eventEndpoints(app) {
         }
     });
 
-    app.delete('/api/event/:id/players', async (req, res) => {
+    app.delete('/api/event/:id/players', authMiddleware, async (req, res) => {
         //Remove player from event
         let id = req.params.id;
         if(isID(id) && await eventModel.findOne({"_id": id})){
             let event = await eventModel.findOne({"_id": id});
             if (!event.owner.equals(req.user)){
+                console.log("Owner: ", event.owner, "\nUser: ", req.user);
                 res.status(401);
                 res.send({"error": "Not authorized to edit event"});
                 return;
