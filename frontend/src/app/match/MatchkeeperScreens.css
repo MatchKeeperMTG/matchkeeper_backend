@@ -1,0 +1,147 @@
+.match-screen-child {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: #880101;
+    width: 1440px;
+    height: 100px;
+}
+.match-screen-item {
+    position: absolute;
+    top: 5px;
+    left: 1332px;
+    border-radius: 50%;
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+}
+.matches {
+    position: absolute;
+    top: 42px;
+    left: 40px;
+    font-size: 50px;
+    color: #fff;
+    display: inline-block;
+    width: 520px;
+    height: 86px;
+}
+.table-6 {
+    position: absolute;
+    top: 24px;
+    left: 114px;
+    font-family: Inter;
+}
+.table-6-card-child {
+    position: absolute;
+    top: 75px;
+    left: 40px;
+    border-radius: 10px;
+    background-color: #d9d9d9;
+    width: 222px;
+    height: 51px;
+}
+.table-6-card-item {
+    position: absolute;
+    top: 150px;
+    left: 40px;
+    border-radius: 10px;
+    background-color: #d9d9d9;
+    width: 222px;
+    height: 51px;
+}
+.player-1 {
+    position: absolute;
+    top: 86px;
+    left: 102px;
+}
+.player-2 {
+    position: absolute;
+    top: 161px;
+    left: 102px;
+}
+.table-6-card {
+    position: absolute;
+    top: 545px;
+    left: 1032px;
+    border-radius: 10px;
+    background-color: #d8bfbf;
+    width: 309px;
+    height: 226px;
+    overflow: hidden;
+}
+.table-5-card {
+    position: absolute;
+    top: 545px;
+    left: 561px;
+    border-radius: 10px;
+    background-color: #d8bfbf;
+    width: 309px;
+    height: 226px;
+    overflow: hidden;
+}
+.table-4-card {
+    position: absolute;
+    top: 545px;
+    left: 90px;
+    border-radius: 10px;
+    background-color: #d8bfbf;
+    width: 309px;
+    height: 226px;
+    overflow: hidden;
+}
+.table-3-card {
+    position: absolute;
+    top: 250px;
+    left: 1030px;
+    border-radius: 10px;
+    background-color: #d8bfbf;
+    width: 309px;
+    height: 226px;
+    overflow: hidden;
+}
+.table-2-card {
+    position: absolute;
+    top: 250px;
+    left: 560px;
+    border-radius: 10px;
+    background-color: #d8bfbf;
+    width: 309px;
+    height: 226px;
+    overflow: hidden;
+}
+.table-1-card {
+    position: absolute;
+    top: 249px;
+    left: 90px;
+    border-radius: 10px;
+    background-color: #d8bfbf;
+    width: 309px;
+    height: 226px;
+    overflow: hidden;
+}
+.match-1 {
+    position: absolute;
+    top: 176px;
+    left: 661px;
+    font-size: 32px;
+    font-family: Inter;
+}
+.event-name {
+    position: absolute;
+    top: 128px;
+    left: 591px;
+    font-size: 40px;
+    font-family: Inter;
+}
+.match-screen {
+    width: 100%;
+    position: relative;
+    background-color: #fff;
+    height: 1024px;
+    overflow: hidden;
+    text-align: left;
+    font-size: 24px;
+    color: #000;
+    font-family: Ubuntu;
+}
+
