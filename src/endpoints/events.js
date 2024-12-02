@@ -9,6 +9,19 @@ import { authMiddleware } from './user.js';
  */
 export function eventEndpoints(app) {
 
+    /**
+     * Gets all events.
+     * Response Schema:
+     * [
+     *  {
+     *    eventName: string,
+     *    location: string,
+     *    playerNum: number,
+     *    maxPlayers: number,
+     *    dateTime: string
+     *  }
+     * ]
+     */
     app.get('/api/event', authMiddleware, async (req, res) => {
         //Get all events
         const results = await eventModel.find();
@@ -143,6 +156,10 @@ export function eventEndpoints(app) {
         }        
     });
 
+    /**
+     * Delete an event by ID.
+     * Verifies that you own an event before deleting it.
+     */
     app.delete('/api/event/:id', authMiddleware, async (req, res) => {
         //Delete an event
         let id = req.params.id;
@@ -164,14 +181,24 @@ export function eventEndpoints(app) {
         }
     });
 
+    /**
+     * Gets a specific event's information.
+     * Response Schema:
+     * {
+     *  eventName: string,
+     *  location: string,
+     *  playerNum: number,
+     *  maxPlayers: number,
+     *  dateTime: string
+     * }
+     */
     app.get('/api/event/:id', authMiddleware, async (req, res) => {
         //Get event details
         let id = req.params.id;
         if(isID(id) && await eventModel.findOne({"_id": id})){
             let result = await eventModel.findOne({"_id": id});
             res.status(200);
-            res.send({'message':'returning result',
-                'data':result});
+            res.send(result);
         }
         else{
             res.status(400);
@@ -180,6 +207,9 @@ export function eventEndpoints(app) {
         }
     });
 
+    /**
+     * Lists all of the usernames of all players that belong to an event.
+     */
     app.get('/api/event/:id/players', authMiddleware, async (req, res) => {
         //Get players in event
         let id = req.params.id;
@@ -218,6 +248,13 @@ export function eventEndpoints(app) {
         }
     });
 
+    /**
+     * Adds a player to an event by ID.
+     * Input schema:
+     * {
+     *  id: string
+     * }
+     */
     app.post('/api/event/:id/players', authMiddleware, async (req, res) => {
         //Add player(s) to event
         let id = req.params.id;
@@ -269,6 +306,13 @@ export function eventEndpoints(app) {
         }
     });
 
+    /**
+     * Removes a player from an event by ID.
+     * Input schema:
+     * {
+     *  id: string
+     * }
+     */
     app.delete('/api/event/:id/players', authMiddleware, async (req, res) => {
         //Remove player from event
         let id = req.params.id;

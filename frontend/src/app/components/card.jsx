@@ -3,6 +3,9 @@
 import React, { useEffect, useState, useRef } from "react"
 
 /**
+ * A card fetched from Scryfall. If cardID is provided, it will fetch the card from Scryfall individually.
+ * Otherwise, set `card` to a Scryfall card object to use a prefetched card.
+ * Style can be overridden, as well as Z-index, HTML ID, and click events.
  * @param {{
  *   cardID?: string,
  *   card?: Object,
