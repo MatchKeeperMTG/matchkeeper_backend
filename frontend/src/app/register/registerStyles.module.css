@@ -1,0 +1,225 @@
+.background {
+    position: absolute;
+    top: 114px;
+    left: 0px;
+    background-color: #edfeec;
+    width: 1440px;
+    height: 925px;
+}
+.headerIcon {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 1440px;
+    height: 100px;
+    background-color: #4E8949;
+}
+.registerAccount {
+    position: absolute;
+    color: #fff;
+    display: inline-block;
+    font-size: 50px;
+    top: 37px;
+    left: 29px;
+    width: 520px;
+    height: 86px;
+}
+.emailBox {
+    position: absolute;
+    top: 145px;
+    left: 390px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    background-color: #fff;
+    border: 1px solid #000;
+    box-sizing: border-box;
+    width: 480px;
+    height: 40px;
+}
+.email {
+    position: absolute;
+    top: 140px;
+    left: 235px;
+    line-height: 140%;
+}
+.usernameBox {
+    position: absolute;
+    top: 200px;
+    left: 390px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    background-color: #fff;
+    border: 1px solid #000;
+    box-sizing: border-box;
+    width: 480px;
+    height: 40px;
+}
+.username {
+    position: absolute;
+    top: 195px;
+    left: 168px;
+    line-height: 140%;
+}
+.passwordBox {
+    position: absolute;
+    top: 365px;
+    left: 390px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    background-color: #fff;
+    border: 1px solid #000;
+    box-sizing: border-box;
+    width: 480px;
+    height: 40px;
+}
+.password {
+    position: absolute;
+    top: 360px;
+    left: 176px;
+    line-height: 140%;
+}
+.reEnterPasswordBox {
+    position: absolute;
+    top: 420px;
+    left: 390px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    background-color: #fff;
+    border: 1px solid #000;
+    box-sizing: border-box;
+    width: 480px;
+    height: 40px;
+}
+.reEnterPassword {
+    position: absolute;
+    top: 415px;
+    left: 42px;
+    line-height: 140%;
+}
+.makeA {
+    margin: 0;
+}
+.makeAMatchkeeperContainer1 {
+    width: 100%;
+}
+.makeAMatchkeeperContainer {
+    position: absolute;
+    top: 35px;
+    left: 132px;
+    line-height: 140%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    width: 660px;
+}
+.registerbox {
+    position: absolute;
+    top: 584px;
+    left: 389px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    background-color: #0a5404;
+    border: 1px solid #000;
+    box-sizing: border-box;
+    width: 192px;
+    height: 50px;
+}
+.register {
+    position: absolute;
+    top: 584px;
+    left: 389px;
+    font-size: 24px;
+    line-height: 140%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 192px;
+    height: 50px;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.fieldframeChild {
+    position: absolute;
+    top: 584px;
+    left: 677px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    background-color: #0a5404;
+    border: 1px solid #000;
+    box-sizing: border-box;
+    width: 192px;
+    height: 50px;
+}
+.back {
+    position: absolute;
+    top: 584px;
+    left: 677px;
+    font-size: 24px;
+    line-height: 140%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 192px;
+    height: 50px;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.firstNameBox {
+    position: absolute;
+    top: 255px;
+    left: 390px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    background-color: #fff;
+    border: 1px solid #000;
+    box-sizing: border-box;
+    width: 480px;
+    height: 40px;
+}
+.firstName {
+    position: absolute;
+    top: 250px;
+    left: 158px;
+    line-height: 140%;
+}
+.lastNameBox {
+    position: absolute;
+    top: 310px;
+    left: 390px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    background-color: #fff;
+    border: 1px solid #000;
+    box-sizing: border-box;
+    width: 480px;
+    height: 40px;
+}
+.lastName {
+    position: absolute;
+    top: 305px;
+    left: 161px;
+    line-height: 140%;
+}
+.fieldframe {
+    position: absolute;
+    top: 172px;
+    left: 248px;
+    border-radius: 10px;
+    background-color: #4e8949;
+    width: 925px;
+    height: 680px;
+    overflow: hidden;
+    font-size: 32px;
+}
+.registerpage {
+    width: 100%;
+    position: relative;
+    background-color: #fff;
+    height: 1024px;
+    overflow: hidden;
+    text-align: left;
+    font-size: 50px;
+    color: #fff;
+    font-family: Ubuntu;
+}
+
