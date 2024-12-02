@@ -1,5 +1,5 @@
 import express from 'express';
-import {eventModel, userProfileModel} from "../index.js";
+import {deckModel, eventModel, userProfileModel} from "../index.js";
 import { isID } from "../index.js";
 import * as mongoose from 'mongoose';
 import { authMiddleware } from './user.js';
@@ -34,7 +34,7 @@ export function eventEndpoints(app) {
                 "location": event.location,
                 "playerNum": event.playerNum,
                 "maxPlayers": event.maxPlayers,
-                "dateTime": event.dateTime
+                "dateTime": event.dateTime,
             });
         }
 
@@ -354,27 +354,108 @@ export function eventEndpoints(app) {
         }
     });
 
-    // app.post('/api/event/:id/decks', (req, res) => {
-    //     res.send('Add Deck to Event');
-    // });
+    app.post('/api/event/:id/decks', authMiddleware, async (req, res) => {
+        let userID = req.user;
+        let eventID = req.params.id;
+        let deckID = req.body.deckID;
+        if(!(isID(userID) && isID(eventID) && isID(deckID))){
+            res.status(400);
+            res.send({"error": "Values not IDs"});
+        }
+        let event = await eventModel.findById(eventID);
+        let user = await userProfileModel.findById(userID);
+        let deck = await deckModel.findById(deckID);
+        if(!event){
+            res.status(400);
+            res.send({"error": "event does not exist"});
+        }
+        if(!user){
+            res.status(400);
+            res.send({"error": "user does not exist"});
+        }
+        if(!deck){
+            res.status(400);
+            res.send({"error": "deck does not exist"});
+        }
 
-    // app.delete('/api/event/:id/decks', (req, res) => {
-    //     res.send('Remove Deck from Event');
-    // });
+        event.decks.push(deckID);
+        event.save();
+        res.status(200);
+        res.send({"message": "added deck to event"});
+    });
 
-    // app.get('/api/event/:id/decks', (req, res) => {
-    //     res.send('View Decks from Event Library');
-    // });
+    app.delete('/api/event/:id/decks', authMiddleware, async (req, res) => {
+        let userID = req.user;
+        let eventID = req.params.id;
+        let deckID = req.body.deckID;
+        if(!(isID(userID) && isID(eventID) && isID(deckID))){
+            res.status(400);
+            res.send({"error": "Values not IDs"});
+        }
+        let event = await eventModel.findById(eventID);
+        let user = await userProfileModel.findById(userID);
+        let deck = await deckModel.findById(deckID);
+        if(!event){
+            res.status(400);
+            res.send({"error": "event does not exist"});
+        }
+        if(!user){
+            res.status(400);
+            res.send({"error": "user does not exist"});
+        }
+        if(!deck){
+            res.status(400);
+            res.send({"error": "deck does not exist"});
+        }
+        if(!event.owner.equals(userID)){
+            res.status(401);
+            res.status({"Error": "Not authorized to remove decks"});
+        }
+        const newDeckList = [];
+        for(const decks of event.decks){
+            if(!decks.equals(deckID)){
+                newDeckList.push(decks);
+            }
+        }
+        event.decks = newDeckList;
+        event.save();
 
-    // app.get('/api/event/:id/bannedCards', (req, res) => {
+        res.status(200);
+        res.send({"message": "removed deck from event"});
+    });
+
+    app.get('/api/event/:id/decks', async (req, res) => {
+        let eventID = req.params.id;
+        if(!isID(eventID)){
+            res.status(400);
+            res.send({"error": "Values not IDs"});
+        }
+        let event = await eventModel.findById(eventID);
+        if(!event){
+            res.status(400);
+            res.send({"error": "event does not exist"});
+        }
+        var message = [];
+
+        for (const deckList of event.decks){
+            const deck = await deckModel.findById(deckList);
+            const owner = await userProfileModel.findById(deck.user);
+            message.push({"Name": deck.deckName, "Creator": owner.username, "Wins": deck.deckWins, "Losses": deck.deckLosses})
+        }
+        console.log(message);
+        res.status(200);
+        res.send({"Message": message});
+    });
+
+    // app.get('/api/event/:id/bannedCards', authMiddleware, async (req, res) => {
     //     res.send('View Banned Cards');
     // });
 
-    // app.post('/api/event/:id/bannedCards', (req, res) => {
+    // app.post('/api/event/:id/bannedCards', authMiddleware, async (req, res) => {
     //     res.send('Add Banned Card');
     // });
 
-    // app.delete('/api/event/:id/bannedCards', (req, res) => {
+    // app.delete('/api/event/:id/bannedCards', authMiddleware, async (req, res) => {
     //     res.send('Unban Card');
     // });
 }

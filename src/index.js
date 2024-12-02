@@ -54,17 +54,18 @@ const bracketSchema = new mongoose.Schema({
 });
 export const bracketModel = mongoose.model('Bracket', bracketSchema);
 
-const eventSchema = new mongoose.Schema({ 
-  eventName : String,
-  location : String,
-  playerNum : Number,
-  maxPlayers : Number,
-  dateTime : Date,
-  owner : {type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'},
-  bracket : [bracketSchema],
-  attendees : [{type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'}]
-});
-export const eventModel = mongoose.model('Event', eventSchema);
+  const eventSchema = new mongoose.Schema({ 
+    eventName : String,
+    location : String,
+    playerNum : Number,
+    maxPlayers : Number,
+    dateTime : Date,
+    owner : {type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'},
+    bracket : [bracketSchema],
+    attendees : [{type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'}],
+    decks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Deck'}]
+  });
+  export const eventModel = mongoose.model('Event', eventSchema);
 
 //applies the schema to a model
 
