@@ -1,8 +1,18 @@
 'use client'
 
 import styles from './registerStyles.module.css'
+import registerAccountButton from './registerAccountButton';
 
 export default function registerPage() {
+
+    function registerAccount ()  {
+      //Fill in register user account here
+      console.log("blarg");
+    };
+
+  function navigateToLogin(){
+    //Fill in the return to login screen here
+  };
 
     return(
     <div className={styles.registerPage}>
@@ -10,13 +20,13 @@ export default function registerPage() {
         <div className={styles.headerIcon} />
         <div className={styles.registerAccount}>Register Account</div>
         <div className={styles.fieldframe}>
-    <div className={styles.emailBox}></div>
+    <input className={styles.emailBox}></input>
     <div className={styles.email}>Email:</div>
-    <div className={styles.usernameBox}></div>
+    <input className={styles.usernameBox}></input>
     <div className={styles.username}>Username:</div>
-    <div className={styles.passwordBox}></div>
+    <input className={styles.passwordBox}></input>
     <div className={styles.password}>Password:</div>
-    <div className={styles.reEnterPasswordBox}></div>
+    <input className={styles.reEnterPasswordBox}></input>
     <div className={styles.reEnterPassword}>Re-enter Password:</div>
     <div className={styles.makeAMatchkeeperContainer}>
       <span className={styles.makeAMatchkeeperContainer1}>
@@ -24,13 +34,17 @@ export default function registerPage() {
         <p className={styles.makeA}>Matchkeeper Account</p>
       </span>
     </div>
-    <div className={styles.registerbox}></div>
-    <div className={styles.register}>Register</div>
-    <div className={styles.fieldframeChild}></div>
-    <div className={styles.back}>Back</div>
-    <div className={styles.firstNameBox}></div>
-    <div className={styles.firsName}>First Name:</div>
-    <div className={styles.lastNameBox}  />
+    <button className={styles.registerbox} onClick={registerAccount}>Register</button>
+    
+    {/* <div className={styles.register}>Register</div> */}
+    
+    <a href='http://localhost:3000/'>
+      <button className={styles.backBox}>Back</button>
+    </a>
+    {/* <div className={styles.back}>Back</div> */}
+    <input className={styles.firstNameBox}></input>
+    <div className={styles.firstName}>First Name:</div>
+    <input className={styles.lastNameBox}></input>  
     <div className={styles.lastName}>Last Name:</div>
         </div>
     </div>
