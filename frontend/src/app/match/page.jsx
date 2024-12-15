@@ -3,6 +3,29 @@ import styles from './mystyles.module.css'
 
 
 export default function OtherPage() {
+
+      //test data to make a bracket
+      const testPlayer = [
+        {"firstname":"Jeff", "lastName":"Jefferson"},
+        {"firstname":"Fred", "lastName":"Fredrickson"},
+        {"firstname":"Bob", "lastName":"Robertson"},
+        {"firstname":"Dang", "lastName":"Knabit"},
+      ];
+
+      //make a pairs of players
+      function makePairs(playersList){
+        let pairs = [];
+
+        for(let i =0; i < playersList.length; i+=2)
+        {
+          pairs[pairs.length] = playersList[i] + playersList[i+1];
+        }
+
+        return pairs;
+      }
+
+      console.log(makePairs(testPlayer));
+
     return (<div className={styles.matchScreen}>
         <div className={styles.matchScreenChild}></div>
         <div className={styles.matchScreenItem}/>
