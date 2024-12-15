@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { apiURL } from '../api';
 import { useRouter } from 'next/navigation';
 import AnimatedLogo from '../components/logo';
+import VaporwaveContainer from '../components/vaporwave';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,17 +43,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={styles.pageContainer}>
-      {/* Background Gradient */}
-      {/* <div style={styles.backgroundGradient}></div> */}
+    <VaporwaveContainer>
+      <header>
+        <h1>Sign In</h1>
+      </header>
 
-      <div style={styles.contentContainer}>
-        <AnimatedLogo style={styles.logo} />
-
-        <div style={styles.headerText}>
-          Sign In
-        </div>
-
+      <main>
         <input
           style={styles.inputBox}
           placeholder='Username'
@@ -76,8 +72,9 @@ export default function LoginPage() {
         <button style={styles.loginButton} onClick={loginPressed}>
           <div style={styles.loginText}>Log In</div>
         </button>
-      </div>
-    </div>
+      </main>
+
+    </VaporwaveContainer>
   );
 }
 

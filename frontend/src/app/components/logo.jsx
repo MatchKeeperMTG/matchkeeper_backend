@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 
-export default function AnimatedLogo({ style = {} }) {
+export default function AnimatedLogo({ style = {}, className = "" }) {
   // Inject animation keyframes
   React.useEffect(() => {
     const floatKeyframes = `
@@ -17,7 +17,7 @@ export default function AnimatedLogo({ style = {} }) {
         }
       }
     `;
-    
+
     const styleTag = document.createElement('style');
     styleTag.innerHTML = floatKeyframes;
     document.head.appendChild(styleTag);
@@ -27,17 +27,20 @@ export default function AnimatedLogo({ style = {} }) {
   }, []);
 
   const logoStyle = {
-    width: '100%',
+    width: '40%',
     height: 'auto',
     animation: 'floatAndRotate 3s ease-in-out infinite',
+    marginTop: '6vf',
     ...style
   };
 
   return (
-    <img
-      src="/logo.png"
-      alt="Match Keeper Logo"
-      style={logoStyle}
-    />
+    <a href="/" style={logoStyle}>
+      <img
+        src="/logo.png"
+        alt="Match Keeper Logo"
+        className={className}
+      />
+    </a>
   );
 }

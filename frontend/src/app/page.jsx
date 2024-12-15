@@ -1,14 +1,18 @@
 'use client'
-import { useState } from "react"
-import CardSearch from "./components/card_search"
 
-export default function Home() {
-    const [selectedCard, setSelectedCard] = useState(null);
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import AnimatedLogo from '@/app/components/logo'
+import VaporwaveContainer from '@/app/components/vaporwave'
 
-    return (
-        <div>
-            {(selectedCard && <p>You selected {selectedCard.name}!</p>)}
-            <CardSearch onCardSelected={setSelectedCard} selectedCard={selectedCard}/>
-        </div>   
-    )
+export default function HomePage() {
+	return (
+		<VaporwaveContainer>
+			<main>
+				<p>Blah blah blah blah blah blah blah frontpage copy</p>
+				<a href="/login">Login</a>
+				<a href="/register">Register</a>
+			</main>
+		</VaporwaveContainer>
+	)
 }
