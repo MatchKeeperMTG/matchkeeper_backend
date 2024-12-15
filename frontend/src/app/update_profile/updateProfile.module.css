@@ -1,0 +1,187 @@
+.header {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: #4e8949;
+    width: 1440px;
+    height: 100px;
+}
+.profileSettings {
+    position: absolute;
+    top: 35px;
+    left: 29px;
+    font-size: 50px;
+    line-height: 140%;
+    font-family: Ubuntu;
+    color: #fff;
+    text-align: center;
+}
+.profileimageIcon {
+    position: absolute;
+    top: 157px;
+    left: 1025px;
+    border-radius: 50%;
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+}
+.username {
+    position: absolute;
+    top: 89px;
+    left: 69px;
+}
+.newPassword {
+    position: absolute;
+    top: 221px;
+    left: 16px;
+}
+.reEnter {
+    margin: 0;
+}
+.reEnterNewPasswordContainer {
+    position: absolute;
+    top: 264px;
+    left: 16px;
+}
+.email {
+    position: absolute;
+    top: 155px;
+    left: 125px;
+}
+.usernameBox {
+    position: absolute;
+    top: 80px;
+    left: 215px;
+    border-radius: 10px;
+    background-color: #d9d9d9;
+    width: 480px;
+    height: 50px;
+}
+.newPasswordBox {
+    position: absolute;
+    top: 208px;
+    left: 215px;
+    border-radius: 10px;
+    background-color: #d9d9d9;
+    width: 480px;
+    height: 50px;
+}
+.emailBox {
+    position: absolute;
+    top: 144px;
+    left: 215px;
+    border-radius: 10px;
+    background-color: #d9d9d9;
+    width: 480px;
+    height: 50px;
+}
+.reEnterNewPasswordBox {
+    position: absolute;
+    top: 272px;
+    left: 215px;
+    border-radius: 10px;
+    background-color: #d9d9d9;
+    width: 480px;
+    height: 50px;
+}
+.firstName {
+    position: absolute;
+    top: 336px;
+    left: 215px;
+    border-radius: 10px;
+    background-color: #d9d9d9;
+    width: 480px;
+    height: 50px;
+}
+.lastName {
+    position: absolute;
+    top: 400px;
+    left: 215px;
+    border-radius: 10px;
+    background-color: #d9d9d9;
+    width: 480px;
+    height: 50px;
+}
+.firstName1 {
+    position: absolute;
+    top: 346px;
+    left: 62px;
+}
+.lastName1 {
+    position: absolute;
+    top: 402px;
+    left: 69px;
+}
+.password {
+    position: absolute;
+    top: 464px;
+    left: 215px;
+    border-radius: 10px;
+    background-color: #d9d9d9;
+    width: 480px;
+    height: 50px;
+}
+.password1 {
+    position: absolute;
+    top: 468px;
+    left: 75px;
+}
+.submitchangesIcon {
+    position: absolute;
+    top: 640px;
+    left: 263px;
+    border-radius: 10px;
+    width: 192px;
+    height: 50px;
+    object-fit: contain;
+    background-color: #0a5404;
+}
+.profileData {
+    position: absolute;
+    top: 173px;
+    left: 99px;
+    border-radius: 10px;
+    background-color: #c0c0c0;
+    width: 750px;
+    height: 750px;
+    overflow: hidden;
+}
+.profileImage {
+    position: absolute;
+    top: 445px;
+    left: 1075px;
+}
+.searchAMagic {
+    position: absolute;
+    top: 512px;
+    left: 1006px;
+    display: inline-block;
+    width: 350px;
+    height: 75px;
+}
+.searchrect {
+    position: absolute;
+    top: 644px;
+    left: 940px;
+    border-radius: 10px;
+    background-color: #d9d9d9;
+    width: 420px;
+    height: 50px;
+}
+.search {
+    position: absolute;
+    top: 654px;
+    left: 1110px;
+}
+.profilesettingspage {
+    width: 100%;
+    position: relative;
+    background-color: #fff;
+    height: 1024px;
+    overflow: hidden;
+    text-align: left;
+    font-size: 24px;
+    color: #000;
+    font-family: Inter;
+}
+
