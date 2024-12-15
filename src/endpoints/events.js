@@ -18,7 +18,8 @@ export function eventEndpoints(app) {
      *    location: string,
      *    playerNum: number,
      *    maxPlayers: number,
-     *    dateTime: string
+     *    dateTime: string,
+     *    description: string
      *  }
      * ]
      */
@@ -35,6 +36,7 @@ export function eventEndpoints(app) {
                 "playerNum": event.playerNum,
                 "maxPlayers": event.maxPlayers,
                 "dateTime": event.dateTime,
+                "description": event.description,
             });
         }
 
@@ -51,6 +53,7 @@ export function eventEndpoints(app) {
      *  "location": string, // Required, location of the event
      *  "maxPlayers": number, // Required, maximum allowed players
      *  "dateTime": number // Required, date-time for the event
+     *  "description": string   //optional
      * }
      * Response Schema:
      * {
@@ -98,6 +101,7 @@ export function eventEndpoints(app) {
             "playerNum": 0,
             "maxPlayers": body.maxPlayers,
             "dateTime": body.dateTime,
+            "description": body.description,
             "owner": req.user,
             "brackets": []
         });
@@ -116,6 +120,7 @@ export function eventEndpoints(app) {
      *  "location": string, // Optional, location of the event
      *  "maxPlayers": number, // Optional, maximum allowed players
      *  "dateTime": number // Optional, date-time for the event
+     *  "description": string   //Optional
      * }
      */
     app.put('/api/event/:id', authMiddleware, async (req, res) => {
@@ -144,7 +149,8 @@ export function eventEndpoints(app) {
                 "eventName": body.eventName,
                 "location": body.location,
                 "maxPlayers": body.maxPlayers,
-                "dateTime": body.dateTime
+                "dateTime": body.dateTime,
+                "description": body.description,
             });
             res.status(200);
             res.send({"message":"Event updated"});            
@@ -190,6 +196,7 @@ export function eventEndpoints(app) {
      *  playerNum: number,
      *  maxPlayers: number,
      *  dateTime: string
+     *  description: string
      * }
      */
     app.get('/api/event/:id', authMiddleware, async (req, res) => {
@@ -354,6 +361,7 @@ export function eventEndpoints(app) {
         }
     });
 
+    //Add deck to event
     app.post('/api/event/:id/decks', authMiddleware, async (req, res) => {
         let userID = req.user;
         let eventID = req.params.id;
@@ -361,6 +369,7 @@ export function eventEndpoints(app) {
         if(!(isID(userID) && isID(eventID) && isID(deckID))){
             res.status(400);
             res.send({"error": "Values not IDs"});
+            return;
         }
         let event = await eventModel.findById(eventID);
         let user = await userProfileModel.findById(userID);
@@ -368,14 +377,17 @@ export function eventEndpoints(app) {
         if(!event){
             res.status(400);
             res.send({"error": "event does not exist"});
+            return;
         }
         if(!user){
             res.status(400);
             res.send({"error": "user does not exist"});
+            return;
         }
         if(!deck){
             res.status(400);
             res.send({"error": "deck does not exist"});
+            return;
         }
 
         event.decks.push(deckID);
@@ -384,6 +396,7 @@ export function eventEndpoints(app) {
         res.send({"message": "added deck to event"});
     });
 
+    //Remove deck from event
     app.delete('/api/event/:id/decks', authMiddleware, async (req, res) => {
         let userID = req.user;
         let eventID = req.params.id;
@@ -391,6 +404,7 @@ export function eventEndpoints(app) {
         if(!(isID(userID) && isID(eventID) && isID(deckID))){
             res.status(400);
             res.send({"error": "Values not IDs"});
+            return;
         }
         let event = await eventModel.findById(eventID);
         let user = await userProfileModel.findById(userID);
@@ -398,18 +412,22 @@ export function eventEndpoints(app) {
         if(!event){
             res.status(400);
             res.send({"error": "event does not exist"});
+            return;
         }
         if(!user){
             res.status(400);
             res.send({"error": "user does not exist"});
+            return;
         }
         if(!deck){
             res.status(400);
             res.send({"error": "deck does not exist"});
+            return;
         }
         if(!event.owner.equals(userID)){
             res.status(401);
             res.status({"Error": "Not authorized to remove decks"});
+            return;
         }
         const newDeckList = [];
         for(const decks of event.decks){
@@ -424,16 +442,19 @@ export function eventEndpoints(app) {
         res.send({"message": "removed deck from event"});
     });
 
+    //Get decks in event
     app.get('/api/event/:id/decks', async (req, res) => {
         let eventID = req.params.id;
         if(!isID(eventID)){
             res.status(400);
             res.send({"error": "Values not IDs"});
+            return;
         }
         let event = await eventModel.findById(eventID);
         if(!event){
             res.status(400);
             res.send({"error": "event does not exist"});
+            return;
         }
         var message = [];
 

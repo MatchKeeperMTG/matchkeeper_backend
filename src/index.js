@@ -19,8 +19,10 @@ const userProfileSchema = new mongoose.Schema({
   lastName: String,
   userEmail: String,
   password: String,
+  description: String,
   wins: Number,
-  losses: Number
+  losses: Number,
+  profilePicture: String
 });
 //applies the schema to a model
 export const userProfileModel = mongoose.model('UserProfile', userProfileSchema);
@@ -47,10 +49,7 @@ const bracketSchema = new mongoose.Schema({
   gameFormat : String,
   playerNum : Number,
   maxPlayers : Number,
-  players : [{
-    type: userProfileSchema,
-    ref: 'userProfileModel'
-  }],
+  players: [{type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'}]
 });
 export const bracketModel = mongoose.model('Bracket', bracketSchema);
 
@@ -60,8 +59,9 @@ export const bracketModel = mongoose.model('Bracket', bracketSchema);
     playerNum : Number,
     maxPlayers : Number,
     dateTime : Date,
+    description : String,
     owner : {type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'},
-    bracket : [bracketSchema],
+    bracket : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bracket' }],
     attendees : [{type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'}],
     decks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Deck'}]
   });

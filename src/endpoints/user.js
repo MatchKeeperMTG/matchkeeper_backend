@@ -107,9 +107,11 @@ export function userEndpoints(app) {
                 firstName: firstName,
                 lastName: lastName,
                 userEmail: userEmail,
+                description: "",
                 password: hashedPassword,
                 wins: 0,
-                losses: 0
+                losses: 0,
+                profilePicture: ""
             });
     
             try {
@@ -167,6 +169,7 @@ export function userEndpoints(app) {
      *  "username": string?,
      *  "firstName": string?,
      *  "lastName": string?,
+     *  "description": sting,
      *  "userEmail": string?,
      *  "password": string?,
      * }
@@ -200,7 +203,7 @@ export function userEndpoints(app) {
             
             await userProfileModel.findOneAndUpdate({ '_id': id }, {
                     'username': req.body.username, 'firstName': req.body.firstName, 'lastName': req.body.lastName,
-                    'userEmail': userEmail, 'password': hashedPassword
+                    'description': req.body.description, 'userEmail': userEmail, 'password': hashedPassword
                 }, {upsert: false});
             res.status(200);
             res.send({});
@@ -238,7 +241,8 @@ export function userEndpoints(app) {
      *  "firstName": string,
      *  "lastName": string,
      *  "wins": number,
-     *  "losses": number
+     *  "losses": number,
+     *  "profilePicture": user.profilePicture
      * }
      */
     app.get('/api/user', authMiddleware, async (req, res) => {
@@ -252,8 +256,10 @@ export function userEndpoints(app) {
             "userEmail": user.userEmail,
             "firstName": user.firstName,
             "lastName": user.lastName,
+            "description": user.description,
             "wins": user.wins,
-            "losses": user.losses
+            "losses": user.losses,
+            "profilePicture": user.profilePicture
         });
     });
 
@@ -270,6 +276,7 @@ export function userEndpoints(app) {
      * {
      *  "id": string,
      *  "username": string,
+     *  "description": string,
      *  "wins": number,
      *  "losses": number
      * }
@@ -301,9 +308,22 @@ export function userEndpoints(app) {
         res.send({
             "id": user._id,
             "username": user.username,
+            "description": user.description,
             "wins": user.wins,
-            "losses": user.losses
+            "losses": user.losses,
+            "profilePicture": user.profilePicture
         });
     });
+
+    //Set user profile picture (NOT COMPLETE?)
+    app.put('/api/user/:id/profilepic', authMiddleware, async(req, res) =>{
+        let id = req.user;
+        const user = await userProfileModel.findById(id);
+        user.profilePicture = req.body.profilePicture;
+        user.save();
+        res.status(200);
+        res.send({});
+    });
+
 }
 
