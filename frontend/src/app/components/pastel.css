@@ -7,8 +7,19 @@
     font-family: Ubuntu;
 }
 
+input {
+    color: black;
+}
+
+button {
+    background-color: #d6d6d6;
+    border-radius: 10px;
+    padding: 10px;
+    color: black;
+}
+
 header {
-    background-color: #4E8949;
+    background-color: var(--highlight);
     padding: 1rem 2rem;
     color: white;
     width: 100%;
@@ -21,7 +32,7 @@ header h1 {
 
 main {
     flex: 1;
-    background-color: #edfeec;
+    background-color: var(--background);
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -30,7 +41,7 @@ main {
 }
 
 form {
-    background-color: #4e8949;
+    background-color: var(--highlight);
     padding: 2rem;
     border-radius: 10px;
     width: 100%;
@@ -78,7 +89,7 @@ input {
     padding: 0.75rem 2rem;
     border-radius: 10px;
     border: 1px solid #000;
-    background-color: #0a5404;
+    background-color: var(--highlight);
     color: white;
     font-size: 1.25rem;
     cursor: pointer;

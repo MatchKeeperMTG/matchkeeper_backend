@@ -1,149 +1,109 @@
-.matchScreenChild {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    background-color: #880101;
-    width: 100%;
-    height: 100px;
-}
-.matchScreenItem {
-    position: absolute;
-    top: 1%;
-    left: 90%;
-    border-radius: 50%;
-    width: 90px;
-    height: 90px;
-    object-fit: cover;
-}
-.matches {
-    position: absolute;
-    top: 42px;
-    left: 40px;
-    font-size: 50px;
-    color: #fff;
-    display: inline-block;
-    width: 520px;
-    height: 86px;
-}
-.table6 {
-    position: absolute;
-    top: 24px;
-    left: 114px;
-    font-family: Inter;
-}
-.tableCardChild {
-    position: absolute;
-    top: 75px;
-    left: 40px;
-    border-radius: 10px;
-    background-color: #d9d9d9;
-    width: 222px;
-    height: 51px;
-}
-.tableCardItem {
-    position: absolute;
-    top: 150px;
-    left: 40px;
-    border-radius: 10px;
-    background-color: #d9d9d9;
-    width: 222px;
-    height: 51px;
-}
-.player1 {
-    position: absolute;
-    top: 86px;
-    left: 102px;
-}
-.player2 {
-    position: absolute;
-    top: 161px;
-    left: 102px;
-}
-.table6Card {
-    position: absolute;
-    top: 545px;
-    left: 1032px;
-    border-radius: 10px;
-    background-color: #d8bfbf;
-    width: 309px;
-    height: 226px;
-    overflow: hidden;
-}
-.table5Card {
-    position: absolute;
-    top: 545px;
-    left: 561px;
-    border-radius: 10px;
-    background-color: #d8bfbf;
-    width: 309px;
-    height: 226px;
-    overflow: hidden;
-}
-.table4Card {
-    position: absolute;
-    top: 545px;
-    left: 90px;
-    border-radius: 10px;
-    background-color: #d8bfbf;
-    width: 309px;
-    height: 226px;
-    overflow: hidden;
-}
-.table3Card {
-    position: absolute;
-    top: 250px;
-    left: 1030px;
-    border-radius: 10px;
-    background-color: #d8bfbf;
-    width: 309px;
-    height: 226px;
-    overflow: hidden;
-}
-.table2Card {
-    position: absolute;
-    top: 250px;
-    left: 560px;
-    border-radius: 10px;
-    background-color: #d8bfbf;
-    width: 309px;
-    height: 226px;
-    overflow: hidden;
-}
-.table1Card {
-    position: absolute;
-    top: 249px;
-    left: 90px;
-    border-radius: 10px;
-    background-color: #d8bfbf;
-    width: 309px;
-    height: 226px;
-    overflow: hidden;
-}
-.match1 {
-    position: absolute;
-    top: 176px;
-    left: 661px;
-    font-size: 32px;
-    font-family: Inter;
-}
-.eventName {
-    position: absolute;
-    top: 128px;
-    left: 591px;
-    font-size: 40px;
-    font-family: Inter;
-}
-.matchScreen {
-    width: 100%;
-    position: absolute;
-    background-color: #fff;
-    height: 1024px;
-    overflow: hidden;
-    text-align: left;
-    font-size: 24px;
-    color: #000;
-    font-family: Ubuntu;
-    left: 0;
-    top:0;
+.content {
+    gap: 10px;
 }
 
+.cardContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+.clickable {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.clickable:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.error {
+    color: #ff0000;
+    text-align: center;
+    margin: 1em 0;
+}
+
+.roundLabel {
+    margin: 1rem 0 0.5rem;
+    color: #666;
+  }
+
+.eventTitle {
+    font-size: 18pt;
+    text-align: center;
+}
+
+.eventLabel {
+    font-size: 16pt;
+    text-align: center;
+}
+
+.versusLabel {
+    font-size: 16pt;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    text-align: center;
+}
+
+.eventsContainer {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.eventSection {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.error {
+    color: #dc3545;
+    padding: 1rem;
+    background-color: #f8d7da;
+    border-radius: 4px;
+}
+
+.cardContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.tableHeader {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #880101;
+}
+
+.tablePlayerLabel {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.tableCard {
+    border-radius: 10px;
+    background-color: #D8BFBF;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    gap: 20px;
+}
+
+.tableHeader {
+    font-size: 18pt;
+    padding: 10px;
+    text-align: center;
+}
+
+.tablePlayerLabel {
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+    background-color: #f4f4f4;
+}

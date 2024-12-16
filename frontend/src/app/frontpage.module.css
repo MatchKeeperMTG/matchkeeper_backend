@@ -1,0 +1,12 @@
+.frontpageContainer {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    align-content: center;
+    text-align: center;
+}
+
+.frontpageContainer button {
+    width: 10%;
+    margin-top: 10px;
+}

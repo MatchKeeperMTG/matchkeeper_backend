@@ -44,28 +44,39 @@ const deckSchema = new mongoose.Schema({
 });
 export const deckModel = mongoose.model('Deck', deckSchema);
 
+const matchupSchema = new mongoose.Schema({
+  player1: { type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' },
+  player2: { type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' },
+  winner: { type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' },
+  round: Number,
+  player1Deck: { type: mongoose.Schema.Types.ObjectId, ref: 'Deck' },
+  player2Deck: { type: mongoose.Schema.Types.ObjectId, ref: 'Deck' },
+});
+
 const bracketSchema = new mongoose.Schema({ 
   bracketStyle : String,
   gameFormat : String,
   playerNum : Number,
   maxPlayers : Number,
-  players: [{type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'}]
+  players: [{type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'}],
+  finishedMatchups: [matchupSchema],
+  eliminatedPlayers: [{type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'}],
 });
 export const bracketModel = mongoose.model('Bracket', bracketSchema);
 
-  const eventSchema = new mongoose.Schema({ 
-    eventName : String,
-    location : String,
-    playerNum : Number,
-    maxPlayers : Number,
-    dateTime : Date,
-    description : String,
-    owner : {type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'},
-    bracket : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bracket' }],
-    attendees : [{type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'}],
-    decks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Deck'}]
-  });
-  export const eventModel = mongoose.model('Event', eventSchema);
+const eventSchema = new mongoose.Schema({ 
+  eventName : String,
+  location : String,
+  playerNum : Number,
+  maxPlayers : Number,
+  dateTime : Date,
+  description : String,
+  owner : {type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'},
+  bracket : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bracket' }],
+  attendees : [{type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'}],
+  decks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Deck'}]
+});
+export const eventModel = mongoose.model('Event', eventSchema);
 
 //applies the schema to a model
 

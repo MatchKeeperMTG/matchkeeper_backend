@@ -82,6 +82,11 @@ export function userEndpoints(app) {
         const password = req.body.password;
 
         if(!username || !firstName || !lastName || !userEmail || !password) {
+            console.log(username);
+            console.log(firstName);
+            console.log(lastName);
+            console.log(userEmail);
+            console.log(password);
             res.status(400);
             res.send({"error": "Incomplete request"});
             return;

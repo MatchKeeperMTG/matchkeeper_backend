@@ -23,7 +23,7 @@ export function eventEndpoints(app) {
      *  }
      * ]
      */
-    app.get('/api/event', authMiddleware, async (req, res) => {
+    app.get('/api/event', async (req, res) => {
         //Get all events
         const results = await eventModel.find();
 
@@ -31,12 +31,14 @@ export function eventEndpoints(app) {
 
         for(const event of results) {
             resultsModified.push({
+                "_id": event._id,
                 "eventName": event.eventName,
                 "location": event.location,
                 "playerNum": event.playerNum,
                 "maxPlayers": event.maxPlayers,
                 "dateTime": event.dateTime,
                 "description": event.description,
+                "bracket": event.bracket
             });
         }
 
@@ -108,8 +110,7 @@ export function eventEndpoints(app) {
         await newEvent.save();
         console.log(newEvent._id);
         res.status(200);
-        res.send({'message': 'returning Event ID',
-            'data':{"id": newEvent._id}});
+        res.send({'id': newEvent._id});
     });
 
     /**
@@ -123,7 +124,7 @@ export function eventEndpoints(app) {
      *  "description": string   //Optional
      * }
      */
-    app.put('/api/event/:id', authMiddleware, async (req, res) => {
+    app.put('/api/event/:id', async (req, res) => {
         //Modify Event
         const body = req.body;
         let id = req.params.id;
@@ -199,7 +200,7 @@ export function eventEndpoints(app) {
      *  description: string
      * }
      */
-    app.get('/api/event/:id', authMiddleware, async (req, res) => {
+    app.get('/api/event/:id', async (req, res) => {
         //Get event details
         let id = req.params.id;
         if(isID(id) && await eventModel.findOne({"_id": id})){

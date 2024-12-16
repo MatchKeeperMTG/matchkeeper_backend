@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { apiURL } from '../api'
-import VaporwaveContainer from '@/app/components/vaporwave'
+import PastelContainer from '../components/pastel';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -60,7 +60,7 @@ export default function RegisterPage() {
   }
 
 	return (
-		<VaporwaveContainer>
+		<PastelContainer>
       <header>
         <h1>Register Account</h1>
       </header>
@@ -110,11 +110,11 @@ export default function RegisterPage() {
 
           <button type="submit">Register</button>
 
-          <a href="/">
+          <a href="/login">
             Already registered? Sign in!
           </a>
         </form>
       </main>
-		</VaporwaveContainer>
+		</PastelContainer>
 	)
 }
