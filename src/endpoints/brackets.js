@@ -251,7 +251,88 @@ export function bracketEndpoints(app) {
         });
     });
 
+    app.post('/api/bracket/:id/matchups/:round/:matchIndex/winner', authMiddleware, async (req, res) => {
+        let id = req.params.id;
+        let round = parseInt(req.params.round);
+        let matchIndex = parseInt(req.params.matchIndex);
+        let winnerId = req.body.winner;
     
+        // Validate bracket exists
+        if (!(isID(id) && await bracketModel.findById(id))) {
+            res.status(400);
+            res.send({ "error": "Invalid bracket ID" });
+            return;
+        }
+    
+        // Check if user owns the event
+        const bracket = await bracketModel.findById(id);
+        const event = await eventModel.findOne({ bracket: { $in: [id] } });
+        
+        if (!event || !event.owner.equals(req.user)) {
+            res.status(401);
+            res.send({ "error": "Not authorized to set match winner" });
+            return;
+        }
+    
+        // Get active players and current matchups
+        const activePlayers = bracket.players.filter(player =>
+            !bracket.eliminatedPlayers.some(ep => ep.equals(player))
+        );
+        activePlayers.sort((a, b) => a.toString().localeCompare(b.toString()));
+    
+        const matchups = [];
+        for (let i = 0; i < activePlayers.length - 1; i += 2) {
+            if (i + 1 < activePlayers.length) {
+                matchups.push({
+                    player1: activePlayers[i],
+                    player2: activePlayers[i + 1],
+                    round: round
+                });
+            }
+        }
+        if (activePlayers.length % 2 !== 0 && activePlayers.length > 0) {
+            matchups.push({
+                player1: activePlayers[activePlayers.length - 1],
+                player2: null,
+                round: round
+            });
+        }
+    
+        // Validate match index
+        if (matchIndex < 0 || matchIndex >= matchups.length) {
+            res.status(400);
+            res.send({ "error": "Invalid match index" });
+            return;
+        }
+    
+        const match = matchups[matchIndex];
+    
+        // Validate winner is one of the players
+        if (!match.player1.equals(winnerId) && (match.player2 && !match.player2.equals(winnerId))) {
+            res.status(400);
+            res.send({ "error": "Winner must be one of the match participants" });
+            return;
+        }
+    
+        // Add match to finished matchups
+        bracket.finishedMatchups.push({
+            player1: match.player1,
+            player2: match.player2,
+            winner: winnerId,
+            round: round
+        });
+    
+        // Add loser to eliminated players
+        const loserId = match.player1.equals(winnerId) ? match.player2 : match.player1;
+        if (loserId) {
+            bracket.eliminatedPlayers.push(loserId);
+        }
+    
+        await bracket.save();
+    
+        res.status(200);
+        res.send({ "message": "Match winner set successfully" });
+    });
 
     //Remove Player from bracket
     app.delete('/api/bracket/:id/players', authMiddleware, async (req, res) => {
