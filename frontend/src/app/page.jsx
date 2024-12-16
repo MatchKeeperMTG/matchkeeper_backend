@@ -1,12 +1,27 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import AnimatedLogo from '@/app/components/logo'
 import PastelContainer from './components/pastel'
 import styles from './frontpage.module.css'
 
 export default function HomePage() {
+	const [isLoggedIn, setIsLoggedIn] = useState(false)
+	const router = useRouter()
+
+	useEffect(() => {
+		// Check if token exists in localStorage
+		const token = localStorage.getItem('token')
+		setIsLoggedIn(!!token)
+	}, [])
+
+	const handleLogout = () => {
+		localStorage.removeItem('token')
+		setIsLoggedIn(false)
+		router.refresh()
+	}
+
 	return (
 		<PastelContainer>
 			<header>
@@ -14,9 +29,19 @@ export default function HomePage() {
 			</header>
 			<main>
 				<div className={styles.frontpageContainer}>
-					<a href="/login"><button className={styles.frontpageLink}>Login</button></a>
-					<a href="/register"><button className={styles.frontpageLink}>Register</button></a>
-					<a href="/match"><button className={styles.frontpageLink}>Matches</button></a>
+					{!isLoggedIn ? (
+						<>
+							<a href="/login"><button className={styles.frontpageLink}>Login</button></a>
+							<a href="/register"><button className={styles.frontpageLink}>Register</button></a>
+						</>
+					) : (
+						<>
+							<a href="/events"><button className={styles.frontpageLink}>Matches</button></a>
+							<a href="/createEvent"><button className={styles.frontpageLink}>Create Match</button></a>
+							<a href="/browseCards"><button className={styles.frontpageLink}>Browse Cards</button></a>
+							<a href="#"><button onClick={handleLogout} className={styles.frontpageLink}>Logout</button></a>
+						</>
+					)}
 				</div>
 			</main>
 		</PastelContainer>

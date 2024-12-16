@@ -25,20 +25,7 @@ async function getAuth() {
 
     token = authResponse.token;
 }
-    /**
-     * Registers a new user.
-     * Input schema:
-     * {
-     *  "username": string,
-     *  "firstName": string,
-     *  "lastName": string,
-     *  "userEmail": string,
-     *  "password": string,
-     * }
-     * 
-     * Returns:
-     * {"token": string}
-     */
+
 async function createEvent() {
     let eventRes = await req("/event", "POST", {
         eventName: "test.js event " + Date.now(),
@@ -76,6 +63,7 @@ async function createEvent() {
 
 async function main() {
     await getAuth();
+    // await deleteAllEvents();
     await createEvent();
 }
 

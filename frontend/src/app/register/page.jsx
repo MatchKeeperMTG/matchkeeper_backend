@@ -17,7 +17,8 @@ export default function RegisterPage() {
   });
   const [error, setError] = useState('');
 
-  async function registerAccount() {
+  async function registerAccount(event) {
+    event.preventDefault();
     // Validate fields
     if (!formData.username || !formData.firstName || !formData.lastName || 
         !formData.userEmail || !formData.password || !formData.reEnterPassword) {
@@ -108,7 +109,7 @@ export default function RegisterPage() {
 
           {error && <div className="error">{error}</div>}
 
-          <button type="submit">Register</button>
+          <button type="submit" onClick={registerAccount}>Register</button>
 
           <a href="/login">
             Already registered? Sign in!

@@ -1,0 +1,52 @@
+.searchForm {
+    margin: 20px auto;
+    display: flex;
+    gap: 10px;
+    max-width: 600px;
+    width: 100%;
+    padding: 0 20px;
+}
+
+.searchInput {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.searchButton {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.searchButton:hover {
+    background-color: #45a049;
+}
+
+.cardGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.cardContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.card {
+    max-width: 100%;
+    height: auto;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}

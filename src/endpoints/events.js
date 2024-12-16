@@ -206,7 +206,10 @@ export function eventEndpoints(app) {
         if(isID(id) && await eventModel.findOne({"_id": id})){
             let result = await eventModel.findOne({"_id": id});
             res.status(200);
-            res.send(result);
+            res.send({
+                ...result.toObject(),
+                playerNum: result.attendees ? result.attendees.length : 0
+            });
         }
         else{
             res.status(400);
@@ -218,7 +221,7 @@ export function eventEndpoints(app) {
     /**
      * Lists all of the usernames of all players that belong to an event.
      */
-    app.get('/api/event/:id/players', authMiddleware, async (req, res) => {
+    app.get('/api/event/:id/players', async (req, res) => {
         //Get players in event
         let id = req.params.id;
         if(isID(id) && await eventModel.findById(id)){

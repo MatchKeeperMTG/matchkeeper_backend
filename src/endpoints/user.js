@@ -330,5 +330,15 @@ export function userEndpoints(app) {
         res.send({});
     });
 
+    app.get('/api/user/validate/:username', async (req, res) => {
+        const username = req.params.username;
+        const user = await userProfileModel.findOne({ username: username });
+        
+        res.status(200).send({
+            exists: !!user,
+            id: user?._id
+        });
+    });
+
 }
 

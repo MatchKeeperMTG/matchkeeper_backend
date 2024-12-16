@@ -164,6 +164,8 @@ export function bracketEndpoints(app) {
             inputBracket.players.push(playerModel._id);
             inputBracket.playerNum += 1;
 
+            console.log(inputBracket.players);
+
             //save the data and exit
             inputBracket.save();
             res.status(200);
@@ -193,34 +195,70 @@ export function bracketEndpoints(app) {
         // Sort by _id to ensure deterministic ordering
         activePlayers.sort((a, b) => a.toString().localeCompare(b.toString()));
 
+        // Check if there are any unmatched players from previous rounds
+        const matchedPlayers = new Set();
+        bracket.finishedMatchups.forEach(match => {
+            if (match.player1) matchedPlayers.add(match.player1.toString());
+            if (match.player2) matchedPlayers.add(match.player2.toString());
+        });
+
+        // Find players who haven't been matched yet
+        const unmatchedPlayers = activePlayers.filter(player => 
+            !matchedPlayers.has(player.toString())
+        );
+
         const matchups = [];
         const round = bracket.finishedMatchups.length > 0
-            ? Math.max(...bracket.finishedMatchups.map(m => m.round)) + 1
+            ? Math.max(...bracket.finishedMatchups.map(m => m.round))
             : 1;
 
-        // Generate pairs of players
-        for (let i = 0; i < activePlayers.length - 1; i += 2) {
-            if (i + 1 < activePlayers.length) {
+        // If there are unmatched players, create new matchups for them
+        if (unmatchedPlayers.length > 0) {
+            // Generate pairs of players from unmatched players
+            for (let i = 0; i < unmatchedPlayers.length - 1; i += 2) {
+                if (i + 1 < unmatchedPlayers.length) {
+                    matchups.push({
+                        player1: unmatchedPlayers[i],
+                        player2: unmatchedPlayers[i + 1],
+                        round: round
+                    });
+                }
+            }
+
+            // Handle odd number of unmatched players - last player gets a bye
+            if (unmatchedPlayers.length % 2 !== 0 && unmatchedPlayers.length > 0) {
                 matchups.push({
-                    player1: activePlayers[i],
-                    player2: activePlayers[i + 1],
+                    player1: unmatchedPlayers[unmatchedPlayers.length - 1],
+                    player2: null,
                     round: round
+                });
+            }
+        } else {
+            // If all current players are matched, create new round matchups
+            // Generate pairs of players
+            for (let i = 0; i < activePlayers.length - 1; i += 2) {
+                if (i + 1 < activePlayers.length) {
+                    matchups.push({
+                        player1: activePlayers[i],
+                        player2: activePlayers[i + 1],
+                        round: round + 1
+                    });
+                }
+            }
+
+            // Handle odd number of players - last player gets a bye
+            if (activePlayers.length % 2 !== 0 && activePlayers.length > 0) {
+                matchups.push({
+                    player1: activePlayers[activePlayers.length - 1],
+                    player2: null,
+                    round: round + 1
                 });
             }
         }
 
-        // Handle odd number of players - last player gets a bye
-        if (activePlayers.length % 2 !== 0 && activePlayers.length > 0) {
-            matchups.push({
-                player1: activePlayers[activePlayers.length - 1],
-                player2: null,
-                round: round
-            });
-        }
-
         res.status(200);
         res.send({
-            round: round,
+            round: matchups.length > 0 ? matchups[0].round : round,
             matchups: matchups
         });
     });

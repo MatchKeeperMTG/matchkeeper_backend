@@ -65,17 +65,26 @@ const bracketSchema = new mongoose.Schema({
 export const bracketModel = mongoose.model('Bracket', bracketSchema);
 
 const eventSchema = new mongoose.Schema({ 
-  eventName : String,
-  location : String,
-  playerNum : Number,
-  maxPlayers : Number,
-  dateTime : Date,
-  description : String,
-  owner : {type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'},
-  bracket : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bracket' }],
-  attendees : [{type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'}],
+  eventName: String,
+  location: String,
+  maxPlayers: Number,
+  dateTime: Date,
+  description: String,
+  owner: {type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'},
+  bracket: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bracket' }],
+  attendees: [{type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile'}],
   decks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Deck'}]
 });
+
+// Add a virtual property for playerNum that's always calculated from attendees
+eventSchema.virtual('playerNum').get(function() {
+  return this.attendees ? this.attendees.length : 0;
+});
+
+// Ensure virtuals are included when converting to JSON
+eventSchema.set('toJSON', { virtuals: true });
+eventSchema.set('toObject', { virtuals: true });
+
 export const eventModel = mongoose.model('Event', eventSchema);
 
 //applies the schema to a model
@@ -115,6 +124,21 @@ async function main() {
     console.log(`[server]: Server is running at http://${host}:${port}`);
   });
 }
+
+app.delete('/api/deleteAll', async (req, res) => {
+  try {
+    // Delete all events
+    await eventModel.deleteMany({});
+    
+    // Delete all brackets
+    await bracketModel.deleteMany({});
+    
+    res.status(200).json({ message: 'Successfully deleted all events and brackets' });
+  } catch (error) {
+    console.error('Error deleting events and brackets:', error);
+    res.status(500).json({ error: 'Failed to delete events and brackets' });
+  }
+});
 
 main().catch(console.error);
 
