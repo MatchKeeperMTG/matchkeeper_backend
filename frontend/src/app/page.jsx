@@ -14,8 +14,9 @@ export default function HomePage() {
 			</header>
 			<main>
 				<div className={styles.frontpageContainer}>
-					<a href="/login"><button>Login</button></a>
-					<a href="/register"><button>Register</button></a>
+					<a href="/login"><button className={styles.frontpageLink}>Login</button></a>
+					<a href="/register"><button className={styles.frontpageLink}>Register</button></a>
+					<a href="/match"><button className={styles.frontpageLink}>Matches</button></a>
 				</div>
 			</main>
 		</PastelContainer>

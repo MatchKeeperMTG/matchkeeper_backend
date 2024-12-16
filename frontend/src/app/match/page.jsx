@@ -71,7 +71,7 @@ function EventSection({ eventName, bracketId, eventId }) {
           });
       })
       .catch(console.error);
-
+    console.log('wat');
     // Fetch both current and completed matchups
     Promise.all([
       fetch(apiURL(`/api/bracket/${bracketId}/matchups`)),
@@ -218,7 +218,7 @@ export default function MatchPage() {
       .then(data => {
         // Filter to only events with brackets
         return Promise.all(data.data.map(async event => {
-          console.log(event);
+          // console.log(event);
           const eventDetails = await fetch(apiURL(`/api/event/${event._id}`)).then(r => r.json());
           return {
             ...event,
